@@ -1,0 +1,4 @@
+aiomysql
+fastapi
+uvicorn
+pip install python-multipart
