@@ -1,4 +1,0 @@
-aiomysql
-fastapi
-uvicorn
-python-multipart
