@@ -1,9 +1,10 @@
 from src.service.dto.posts import postview
 from src.models.paramClasses import SchemaAddPost
-from src.models.dbModels import User_trades, User_posts, Post_photos, Post_categories, Categories
+from src.models.dbModels import User_trades, User_posts, Post_photos, Post_categories, Categories, Trades
 from src.service.dao.users import User
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from src.db import async_session_maker
+from src.routers.responses import PostResponse
 
 
 class Posts:
@@ -15,7 +16,11 @@ class Posts:
     @staticmethod
     @postview
     async def add(post: SchemaAddPost):
-        pass
+        stmt1 = insert(Trades).returning(Trades.trade_id)
+        async with async_session_maker() as session:
+            trade_id = await session.execute(stmt1)
+            print(trade_id.scalars().first())
+            stmt2 = insert(User_posts).values(post_name = post.post_name, post_type = post.post_type,trade_id = trade_id)
 
     @staticmethod
     async def get_all():
@@ -65,8 +70,9 @@ class Posts:
                         photos = photos.scalars().all()
                         categories = await session.execute(stmtC)
                         categories = categories.scalars().all()
-                        psts.append((post,photos,categories,user))
-            return psts
+                        if not isinstance(user,dict) and post:
+                            psts.append((post,photos,categories,user))
+            return psts if psts else PostResponse.NOT_FOUND
         else:
             stmtP = select(User_posts).where(User_posts.post_id == post_id)
             stmtPP = select(Post_photos.post_photo_name, Post_photos.post_photo).where(Post_photos.post_id == post_id)
@@ -85,4 +91,6 @@ class Posts:
                     usr_id = await session.execute(stmt)
                     usr_id = usr_id.scalars().first()
                     user = await User.get_user(usr_id)
+                    if isinstance(user,dict):
+                        return PostResponse.NOT_FOUND
                 return (post,photos,categories,user)

@@ -3,3 +3,6 @@ sqlalchemy
 fastapi
 uvicorn
 python-multipart
+passlib
+pydantic[email]
+bcrypt

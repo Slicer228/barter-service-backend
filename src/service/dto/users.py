@@ -3,6 +3,8 @@ from src.models.responseClasses import SchemaUser
 def userview(func):
     async def wrapper(*args):
         original = await func(*args)
+        if isinstance(original, dict):
+            return original
         if original:
             if isinstance(original,list):
                 vlst = []

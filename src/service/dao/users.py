@@ -1,8 +1,12 @@
+import json
+from sqlalchemy.exc import IntegrityError
 from src.models.paramClasses import SchemaAddUser
 from sqlalchemy import select, insert
 from src.models.dbModels import Users
 from src.db import async_session_maker
 from src.service.dto.users import userview
+from src.service.auth import get_hashed_password
+from src.routers.responses import UserResponse
 
 
 class User:
@@ -10,10 +14,14 @@ class User:
     @staticmethod
     @userview
     async def set(usrobj: SchemaAddUser):
-        stmt = insert(Users).values(username=usrobj.username,password=usrobj.password, avatar=usrobj.avatar)
+        password = get_hashed_password(usrobj.password)
+        stmt = insert(Users).values(username=usrobj.username,password=password, avatar=bytes(json.dumps(usrobj.avatar),'utf8'), email=usrobj.email)
         async with async_session_maker() as session:
-            result = await session.execute(stmt)
-            await session.commit()
+            try:
+                result = await session.execute(stmt)
+                await session.commit()
+            except IntegrityError:
+                return UserResponse.ALREADY_EXISTS
 
     @staticmethod
     @userview
@@ -21,7 +29,11 @@ class User:
         stmt = select(Users).where(Users.user_id == user_id)
         async with async_session_maker() as session:
             result = await session.execute(stmt)
-            return result.scalars().all()[0]
+            result = result.scalars().all()
+            if result:
+                return result[0]
+            else:
+                return UserResponse.NOT_FOUND
 
     @staticmethod
     @userview

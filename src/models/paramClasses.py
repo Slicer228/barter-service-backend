@@ -1,15 +1,15 @@
 from typing import Optional
-
+from pydantic import EmailStr
 
 class SchemaAddPost:
     def __init__(
             self,
-            user_id: str,
+            user_id: int,
             post_name: str,
-            post_description: Optional[str],
             post_type: str,
-            photos: Optional[list] = None,
-            categories: Optional[list[str]] = None
+            post_description: str | None = None,
+            photos: list | None = None,
+            categories: list[str] | None = None
     ):
         self.user_id = user_id
         self.post_name = post_name
@@ -23,9 +23,11 @@ class SchemaAddUser:
             self,
             username: str,
             password: str,
+            email: EmailStr,
             avatar: str | None = None
     ):
         self.password = password
+        self.email = email
         self.avatar = avatar
         self.username = username
 

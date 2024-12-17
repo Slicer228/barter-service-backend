@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.networkCfg import origins
 import uvicorn
 from contextlib import asynccontextmanager
-#from src.routers.posts.post import postPostsRouter
+from src.routers.posts.post import postPostsRouter
 from src.routers.posts.get import getPostsRouter
 from src.routers.users.get import getUsersRouter
 from src.routers.users.post import postUsersRouter
@@ -19,7 +19,7 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        #app.include_router(postPostsRouter)
+        app.include_router(postPostsRouter)
         app.include_router(getPostsRouter)
         app.include_router(getUsersRouter)
         app.include_router(postUsersRouter)

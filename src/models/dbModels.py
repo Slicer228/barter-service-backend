@@ -13,7 +13,8 @@ class Users(Base):
 
     user_id: Mapped[int] = mapped_column(primary_key=True,autoincrement=True)
     username: Mapped[str] = mapped_column(String(16),nullable=False)
-    password: Mapped[str] = mapped_column(String(32),nullable=False)
+    password: Mapped[str] = mapped_column(String(128),nullable=False)
+    email: Mapped[str] = mapped_column(String(32),nullable=False,unique=True)
     avatar: Mapped[str] = mapped_column(BLOB,default=None)
     green_scores: Mapped[int] = mapped_column(Integer,default=0)
     green_points: Mapped[int] = mapped_column(Integer,default=0)

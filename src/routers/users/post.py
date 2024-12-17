@@ -1,5 +1,5 @@
 from src.utils import addLogAsync
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from src.service.dao.users import User
 from src.models.responseClasses import SchemaUser
 from src.models.paramClasses import SchemaAddUser
@@ -8,7 +8,8 @@ from typing import Optional
 
 postUsersRouter = APIRouter(prefix="/users")
 
-
-@postUsersRouter.post("/add/",response_model=Optional[SchemaUser])
+@postUsersRouter.post("/register/")
 async def create_user(user: SchemaAddUser = Depends()):
-    await User.set(user)
+    resp = await User.set(user)
+    if resp:
+        raise HTTPException(**resp)

@@ -3,6 +3,8 @@ from src.models.responseClasses import SchemaPost, SchemaPostPhoto, SchemaPostCa
 def postview(func):
     async def wrapper(*args):
         original = await func(*args)
+        if isinstance(original, dict):
+            return original
         if isinstance(original,list):
             psts_final = []
             for post in original:
