@@ -2,6 +2,7 @@ from src.routers.responses import UserResponse, PostResponse
 from sqlalchemy.exc import IntegrityError
 from src.errors import NotFound
 from fastapi import HTTPException
+from src.utils import addLog
 
 
 def error_handler_users(func):
@@ -13,7 +14,8 @@ def error_handler_users(func):
             raise HTTPException(**UserResponse.ALREADY_EXISTS)
         except NotFound:
             raise HTTPException(**UserResponse.NOT_FOUND)
-        except Exception:
+        except Exception as e:
+            await addLog(e)
             raise HTTPException(**UserResponse.ERROR)
 
     return wrapper
@@ -25,7 +27,8 @@ def error_handler_posts(func):
             return result
         except NotFound:
             raise HTTPException(**PostResponse.NOT_FOUND)
-        except Exception:
+        except Exception as e:
+            await addLog(e)
             raise HTTPException(**PostResponse.ERROR)
 
     return wrapper

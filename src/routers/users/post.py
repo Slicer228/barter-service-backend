@@ -1,4 +1,4 @@
-from src.utils import addLogAsync
+from src.utils import addLog
 from fastapi import APIRouter, HTTPException
 from src.service.dao.users import User
 from src.models.responseClasses import SchemaUser

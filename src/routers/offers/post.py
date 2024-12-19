@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from src.utils import addLogAsync
+from src.utils import addLog
 
 
 postOffersRouter = APIRouter(prefix="/offers")

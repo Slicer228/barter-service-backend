@@ -15,12 +15,54 @@ class Posts:
 
     @staticmethod
     @postview
-    async def add(post: SchemaAddPost):
-        stmt1 = insert(Trades).returning(Trades.trade_id)
-        async with async_session_maker() as session:
-            trade_id = await session.execute(stmt1)
-            print(trade_id.scalars().first())
-            stmt2 = insert(User_posts).values(post_name = post.post_name, post_type = post.post_type,trade_id = trade_id)
+    async def add(post: SchemaAddPost | list[SchemaAddPost]):
+        if isinstance(post, list):
+            pass
+        else:
+            stmt1 = insert(Trades)
+            async with async_session_maker() as session:
+                async with session.begin():
+                    data = await session.execute(stmt1)
+                    await session.commit()
+                    trade_id = data.lastrowid
+                async with session.begin():
+                    stmt2 = insert(User_posts).values(
+                        post_name = post.post_name,
+                        post_type = post.post_type,
+                        trade_id = trade_id,
+                        post_description = post.post_description
+                    )
+                    data = await session.execute(stmt2)
+                    await session.commit()
+                    post_id = data.lastrowid
+
+                stmt = insert(User_trades).values(
+                    user_id=post.user_id,
+                    post_id=post_id,
+                    trade_id=trade_id,
+                    utType='post')
+                await session.execute(stmt)
+                await session.commit()
+
+                if post.categories:
+                    i = 0
+                    for cat in post.categories:
+                        stmt = insert(Post_categories).values(
+                            post_id = post_id,
+                            category_id = cat,
+                            category_type = 'main' if not i else 'secondary')
+                        i = 1
+                        await session.execute(stmt)
+                        await session.commit()
+                if post.photos:
+                    for photo in post.photos:
+                        stmt = insert(Post_photos).values(post_photo=photo.post_photo,post_photo_name=photo.post_photo_name, post_id=post_id)
+                        await session.execute(stmt)
+                        await session.commit()
+
+                return post_id
+
+
 
     @staticmethod
     async def get_all():

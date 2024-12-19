@@ -1,4 +1,4 @@
-from src.utils import addLogAsync
+from src.utils import addLog
 from fastapi import FastAPI,HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
         yield
         print('end')
     except Exception as e:
-        await addLogAsync(e)
+        await addLog(e)
 
 app = FastAPI(lifespan=lifespan)
 

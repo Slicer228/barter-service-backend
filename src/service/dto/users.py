@@ -18,7 +18,7 @@ def userview(func):
                         green_points=usr.green_points
                     ))
                 return vlst
-            else:
+            elif isinstance(original,SchemaUser):
                 return SchemaUser(
                     user_id=original.user_id,
                     username=original.username,
@@ -26,6 +26,8 @@ def userview(func):
                     green_scores=original.green_scores,
                     green_points=original.green_points
                 )
+            else:
+                return original
         else:
             return None
     return wrapper

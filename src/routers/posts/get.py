@@ -1,4 +1,4 @@
-from src.utils import addLogAsync
+from src.utils import addLog
 from fastapi import APIRouter,HTTPException
 from typing import Optional
 from src.models.responseClasses import SchemaPost
