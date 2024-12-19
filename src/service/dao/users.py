@@ -1,5 +1,5 @@
 import json
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DBAPIError
 from src.models.paramClasses import SchemaAddUser
 from sqlalchemy import select, insert
 from src.models.dbModels import Users
@@ -7,7 +7,7 @@ from src.db import async_session_maker
 from src.service.dto.users import userview
 from src.service.auth import get_hashed_password
 from src.routers.responses import UserResponse
-
+from src.errors import NotFound
 
 class User:
 
@@ -17,11 +17,8 @@ class User:
         password = get_hashed_password(usrobj.password)
         stmt = insert(Users).values(username=usrobj.username,password=password, avatar=bytes(json.dumps(usrobj.avatar),'utf8'), email=usrobj.email)
         async with async_session_maker() as session:
-            try:
-                result = await session.execute(stmt)
-                await session.commit()
-            except IntegrityError:
-                return UserResponse.ALREADY_EXISTS
+            result = await session.execute(stmt)
+            await session.commit()
 
     @staticmethod
     @userview
@@ -33,7 +30,7 @@ class User:
             if result:
                 return result[0]
             else:
-                return UserResponse.NOT_FOUND
+                raise NotFound()
 
     @staticmethod
     @userview

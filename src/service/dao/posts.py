@@ -91,6 +91,4 @@ class Posts:
                     usr_id = await session.execute(stmt)
                     usr_id = usr_id.scalars().first()
                     user = await User.get_user(usr_id)
-                    if isinstance(user,dict):
-                        return PostResponse.NOT_FOUND
                 return (post,photos,categories,user)

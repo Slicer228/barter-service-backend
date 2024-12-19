@@ -1,6 +1,9 @@
 from src.utils import addLogAsync
-from fastapi import FastAPI
+from fastapi import FastAPI,HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestErrorModel, ResponseValidationError, RequestValidationError
+from fastapi.encoders import jsonable_encoder
 from src.networkCfg import origins
 import uvicorn
 from contextlib import asynccontextmanager
@@ -11,6 +14,7 @@ from src.routers.users.post import postUsersRouter
 #from src.routers.offers.get import getOffersRouter
 #from src.routers.offers.post import postOffersRouter
 from dotenv import load_dotenv
+
 
 
 load_dotenv()
@@ -32,6 +36,21 @@ async def lifespan(app: FastAPI):
         await addLogAsync(e)
 
 app = FastAPI(lifespan=lifespan)
+
+@app.exception_handler(RequestValidationError)
+async def validations_req_err(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=400,
+        content=jsonable_encoder({'detail': exc.errors(), 'error': 'bad request'})
+    )
+
+@app.exception_handler(ResponseValidationError)
+async def validations_resp_err(response: Response, exc: ResponseValidationError):
+    return JSONResponse(
+        status_code=500,
+        content=jsonable_encoder({'detail': exc.errors(), 'error': 'bad response'})
+    )
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

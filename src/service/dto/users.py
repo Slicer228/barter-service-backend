@@ -1,10 +1,11 @@
 from src.models.responseClasses import SchemaUser
+from src.error_handlers import error_handler_users
+
 
 def userview(func):
+    @error_handler_users
     async def wrapper(*args):
         original = await func(*args)
-        if isinstance(original, dict):
-            return original
         if original:
             if isinstance(original,list):
                 vlst = []

@@ -9,4 +9,5 @@ postPostsRouter = APIRouter(prefix="/posts")
 
 @postPostsRouter.post("/add/", response_model=SchemaPost)
 async def create_post(post: SchemaAddPost = Depends()):
-    res = await Posts.add(post)
+    resp = await Posts.add(post)
+    return resp

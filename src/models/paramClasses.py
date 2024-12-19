@@ -36,7 +36,7 @@ class SchemaActOffer:
             self,
             post_id: int,
             source_post_id: int,
-            user_id: Optional[str] = None
+            user_id: int | None = None
     ):
         self.post_id = post_id
         self.source_post_id = source_post_id

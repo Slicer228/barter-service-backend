@@ -11,5 +11,4 @@ postUsersRouter = APIRouter(prefix="/users")
 @postUsersRouter.post("/register/")
 async def create_user(user: SchemaAddUser = Depends()):
     resp = await User.set(user)
-    if resp:
-        raise HTTPException(**resp)
+    return resp
