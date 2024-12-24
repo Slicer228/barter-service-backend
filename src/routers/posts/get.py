@@ -8,6 +8,6 @@ getPostsRouter = APIRouter(prefix="/posts")
 
 
 @getPostsRouter.get("/posts/{post_id}")
-async def get_posts(post_id: int) -> list[SchemaPost] | SchemaPost:
+async def get_posts(post_id: int) -> list[SchemaPost]:
     resp = await Posts.get(post_id)
     return resp

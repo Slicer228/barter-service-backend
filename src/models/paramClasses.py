@@ -4,7 +4,7 @@ from pydantic import EmailStr, BaseModel
 
 class SchemaPostPhoto(BaseModel):
     post_photo: str
-    photo_name: str
+    post_photo_name: str
 class SchemaAddPost(BaseModel):
     user_id: int
     post_name: str

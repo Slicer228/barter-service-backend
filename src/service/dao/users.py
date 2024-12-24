@@ -17,8 +17,12 @@ class User:
         password = get_hashed_password(usrobj.password)
         stmt = insert(Users).values(username=usrobj.username,password=password, avatar=bytes(json.dumps(usrobj.avatar),'utf8'), email=usrobj.email)
         async with async_session_maker() as session:
-            result = await session.execute(stmt)
-            await session.commit()
+            async with session.begin():
+                try:
+                    result = await session.execute(stmt)
+                    await session.commit()
+                finally:
+                    await session.rollback()
 
     @staticmethod
     @userview
@@ -26,33 +30,58 @@ class User:
         stmt = select(Users).where(Users.user_id == user_id)
         async with async_session_maker() as session:
             result = await session.execute(stmt)
-            result = result.scalars().all()
+            result = result.scalars().first()
             if result:
-                return result[0]
+                return result
             else:
                 raise NotFound()
 
     @staticmethod
     @userview
     async def add_green_points(user_id: int, gp: int):
-        return "suckass"
+        async with async_session_maker() as session:
+            async with session.begin():
+                try:
+                    pass
+                finally:
+                    await session.rollback()
 
     @staticmethod
     @userview
     async def refactor_green_score(user_id: int, isGoodBoy: bool = False):
-        return "suckass"
+        async with async_session_maker() as session:
+            async with session.begin():
+                try:
+                    pass
+                finally:
+                    await session.rollback()
 
     @staticmethod
     @userview
     async def rename(user_id: int, new_name: str):
-        return "suckass"
+        async with async_session_maker() as session:
+            async with session.begin():
+                try:
+                    pass
+                finally:
+                    await session.rollback()
 
     @staticmethod
     @userview
     async def update_photo(user_id: int, new_photo):
-        return "suckass"
+        async with async_session_maker() as session:
+            async with session.begin():
+                try:
+                    pass
+                finally:
+                    await session.rollback()
 
     @staticmethod
     @userview
     async def update_password(user_id: int, new_password: str):
-        return "suckass"
+        async with async_session_maker() as session:
+            async with session.begin():
+                try:
+                    pass
+                finally:
+                    await session.rollback()

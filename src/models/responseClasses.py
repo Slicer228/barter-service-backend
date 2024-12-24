@@ -12,8 +12,6 @@ class SchemaPostPhoto(BaseModel):
     post_photo_name: str
     post_photo: str
 
-class SchemaPostCategories(BaseModel):
-    category_name: str
 class SchemaPost(BaseModel):
     owner: SchemaUser | None
     post_id: int
@@ -22,7 +20,7 @@ class SchemaPost(BaseModel):
     post_type: str
     status: str
     photos: list[SchemaPostPhoto] | list
-    categories: list[SchemaPostCategories] | list
+    categories: list[int] | list
 
 
 class SchemaOffer(BaseModel):

@@ -25,6 +25,8 @@ def error_handler_posts(func):
         try:
             result = await func(*args)
             return result
+        except IntegrityError:
+            raise HTTPException(**UserResponse.NOT_FOUND)
         except NotFound:
             raise HTTPException(**PostResponse.NOT_FOUND)
         except Exception as e:
