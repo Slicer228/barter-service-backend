@@ -13,13 +13,17 @@ class SchemaAddPost(BaseModel):
     photos: list[SchemaPostPhoto] | None = None
     categories: list[int]
 
-class SchemaAddUser:
+class SchemaAddUser(BaseModel):
     username: str
     password: str
     email: EmailStr
     avatar: str | None = None
 
-class SchemaActOffer:
+class SchemaAuthUser(BaseModel):
+    email: EmailStr
+    password: str
+
+class SchemaActOffer(BaseModel):
     post_id: int
     source_post_id: int
     user_id: int | None = None

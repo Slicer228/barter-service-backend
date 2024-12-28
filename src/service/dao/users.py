@@ -1,40 +1,69 @@
 import json
 from sqlalchemy.exc import IntegrityError, DBAPIError
-from src.models.paramClasses import SchemaAddUser
+from sqlalchemy.testing.pickleable import User
+from src.models.paramClasses import SchemaAddUser, SchemaAuthUser
 from sqlalchemy import select, insert
 from src.models.dbModels import Users
 from src.db import async_session_maker
 from src.service.dto.users import userview
-from src.service.auth import get_hashed_password
+from src.service.auth import get_hashed_password, verify_password, create_access_token
 from src.routers.responses import UserResponse
-from src.errors import NotFound
+from src.errors import NotFound, AuthError, UserAlreadyExists
 
 class User:
 
     @staticmethod
     @userview
-    async def set(usrobj: SchemaAddUser):
+    async def set(usrobj: SchemaAddUser) -> int:
         password = get_hashed_password(usrobj.password)
-        stmt = insert(Users).values(username=usrobj.username,password=password, avatar=bytes(json.dumps(usrobj.avatar),'utf8'), email=usrobj.email)
+        stmt = insert(Users).values(username=usrobj.username,
+                                    password=password,
+                                    avatar=bytes(json.dumps(usrobj.avatar),'utf8'),
+                                    email=usrobj.email
+                                    )
         async with async_session_maker() as session:
             async with session.begin():
                 try:
                     result = await session.execute(stmt)
                     await session.commit()
+                    return result.lastrowid
+                except IntegrityError:
+                    raise UserAlreadyExists()
                 finally:
                     await session.rollback()
 
     @staticmethod
     @userview
-    async def get_user(user_id: int):
-        stmt = select(Users).where(Users.user_id == user_id)
+    async def auth(user: SchemaAuthUser) -> int:
         async with async_session_maker() as session:
-            result = await session.execute(stmt)
-            result = result.scalars().first()
-            if result:
-                return result
+            stmt = select(Users).where(Users.email==user.email)
+            data = await session.execute(stmt)
+            data = data.scalars().first()
+            if verify_password(user.password, data.password):
+                return data.user_id
             else:
-                raise NotFound()
+                raise AuthError()
+
+    @staticmethod
+    @userview
+    async def get_user(user_id: int | list[int]) -> list[User]:
+        async with async_session_maker() as session:
+            if isinstance(user_id, list):
+                users = []
+                for user in user_id:
+                    stmt = select(Users).where(Users.user_id == user)
+                    result = await session.execute(stmt)
+                    result = result.scalars().first()
+                    users.append(result)
+                return users
+            else:
+                stmt = select(Users).where(Users.user_id == user_id)
+                result = await session.execute(stmt)
+                result = result.scalars().first()
+                if result:
+                    return [result]
+                else:
+                    raise NotFound()
 
     @staticmethod
     @userview

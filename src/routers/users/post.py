@@ -1,14 +1,21 @@
-from src.utils import addLog
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Response
 from src.service.dao.users import User
-from src.models.responseClasses import SchemaUser
-from src.models.paramClasses import SchemaAddUser
+from src.models.paramClasses import SchemaAddUser, SchemaAuthUser
 from fastapi import Depends
-from typing import Optional
-
+from src.service.auth import create_access_token
 postUsersRouter = APIRouter(prefix="/users")
 
+
 @postUsersRouter.post("/register/")
-async def create_user(user: SchemaAddUser = Depends()):
-    resp = await User.set(user)
-    return resp
+async def create_user(response: Response,user: SchemaAddUser):
+    user_id = await User.set(user)
+    token = create_access_token({'sub': str(user_id)})
+    response.set_cookie('access_token', token, httponly=True)
+    return None
+
+@postUsersRouter.post("/auth/")
+async def login_user(response: Response,user: SchemaAuthUser):
+    user_id = await User.auth(user)
+    token = create_access_token({'sub': str(user_id)})
+    response.set_cookie('access_token', token, httponly=True)
+    return None
