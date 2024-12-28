@@ -6,7 +6,6 @@ class SchemaPostPhoto(BaseModel):
     post_photo: str
     post_photo_name: str
 class SchemaAddPost(BaseModel):
-    user_id: int
     post_name: str
     post_type: str
     post_description: str | None = None

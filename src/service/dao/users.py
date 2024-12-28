@@ -1,14 +1,10 @@
-import json
-from sqlalchemy.exc import IntegrityError, DBAPIError
-from sqlalchemy.testing.pickleable import User
 from src.models.paramClasses import SchemaAddUser, SchemaAuthUser
 from sqlalchemy import select, insert
 from src.models.dbModels import Users
 from src.db import async_session_maker
 from src.service.dto.users import userview
 from src.service.auth import get_hashed_password, verify_password, create_access_token
-from src.routers.responses import UserResponse
-from src.errors import NotFound, AuthError, UserAlreadyExists
+from src.internal_exceptions import NotFound, AuthError, AlreadyExists
 
 class User:
 
@@ -27,8 +23,6 @@ class User:
                     result = await session.execute(stmt)
                     await session.commit()
                     return result.lastrowid
-                except IntegrityError:
-                    raise UserAlreadyExists()
                 finally:
                     await session.rollback()
 
@@ -46,7 +40,7 @@ class User:
 
     @staticmethod
     @userview
-    async def get_user(user_id: int | list[int]) -> list[User]:
+    async def get_user(user_id: int | list[int]) -> list[Users]:
         async with async_session_maker() as session:
             if isinstance(user_id, list):
                 users = []

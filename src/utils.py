@@ -1,9 +1,8 @@
-import logging,asyncio
-from fastapi import Request, HTTPException, Depends
-from src.routers.responses import UserResponse
+import logging, asyncio
+from fastapi import Request, Depends
 from jose import JWTError, jwt
 from config import settings
-from src.errors import AuthError
+from src.exceptions import UserUnauthorized
 from datetime import datetime, UTC
 
 logging.basicConfig(level=logging.ERROR,filename="logs.log",filemode="a",
@@ -16,7 +15,7 @@ async def addLog(err):
 async def get_token(request: Request):
     token = request.cookies.get('access_token')
     if not token:
-        raise HTTPException(**UserResponse.NOT_AUTH)
+        raise UserUnauthorized()
     else:
         return token
 
@@ -30,6 +29,6 @@ async def get_user_from_token(token: str = Depends(get_token)):
         if payload['sub'] and payload['exp']:
             return int(payload['sub'])
         else:
-            raise HTTPException(**UserResponse.NOT_AUTH)
+            raise UserUnauthorized()
     except JWTError:
-        raise HTTPException(**UserResponse.NOT_AUTH)
+        raise UserUnauthorized()
