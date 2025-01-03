@@ -1,10 +1,10 @@
 from src.service.dto.posts import postview
-from src.models.paramClasses import SchemaAddPost
+from src.schemas.request_s import SchemaAddPost
 from src.models.dbModels import User_trades, User_posts, Post_photos, Post_categories, Categories, Trades
 from src.service.dao.users import User
 from sqlalchemy import select, insert
 from src.db import async_session_maker
-from src.internal_exceptions import NoAccess, NotFound
+
 
 class Posts:
 

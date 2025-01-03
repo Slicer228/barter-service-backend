@@ -1,4 +1,4 @@
-from src.models.responseClasses import SchemaUser
+from src.schemas.response_s import SchemaUser
 from src.exception_handlers import error_handler_users
 from src.models.dbModels import Users
 

@@ -25,4 +25,3 @@ class SchemaAuthUser(BaseModel):
 class SchemaActOffer(BaseModel):
     post_id: int
     source_post_id: int
-    user_id: int | None = None

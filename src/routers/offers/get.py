@@ -1,9 +1,13 @@
-from fastapi import APIRouter
-from src.utils import addLog
-
+from fastapi import APIRouter, Depends
+from src.utils import get_user_from_token
+from src.service.dao.offers import Offers
 
 getOffersRouter = APIRouter(prefix="/offers")
 
+
+@getOffersRouter.get("/incoming")
+async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
+    pass
 
 @getOffersRouter.get("/outgoing/{user_id}", response_model=list[SchemaOffer])
 async def get_outgoing(user_id: str):

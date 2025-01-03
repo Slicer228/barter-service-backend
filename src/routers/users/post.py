@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Response
 from src.service.dao.users import User
-from src.models.paramClasses import SchemaAddUser, SchemaAuthUser
-from fastapi import Depends
+from src.schemas.request_s import SchemaAddUser, SchemaAuthUser
 from src.service.auth import create_access_token
 postUsersRouter = APIRouter(prefix="/users")
 

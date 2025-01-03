@@ -1,8 +1,12 @@
-from fastapi import APIRouter
-from src.utils import addLog
-
+from fastapi import APIRouter, Depends
+from src.utils import get_user_from_token
+from src.schemas.request_s import SchemaActOffer
 
 postOffersRouter = APIRouter(prefix="/offers")
+
+@postOffersRouter.post("/send")
+async def send_offer(offer: SchemaActOffer,user_id: int = Depends(get_user_from_token)):
+    pass
 
 @postOffersRouter.post("/send/",response_model=SchemaPost)
 async def send(data: SchemaActOffer = Depends()):

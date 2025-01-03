@@ -14,7 +14,9 @@ from src.routers.users.post import postUsersRouter
 #from src.routers.offers.get import getOffersRouter
 #from src.routers.offers.post import postOffersRouter
 from dotenv import load_dotenv
-
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
 
 
 load_dotenv()
@@ -23,6 +25,8 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
+        redis = aioredis.from_url('redis://localhost:6379', encoding='utf-8', decode_responses=True)
+        FastAPICache.init(RedisBackend(redis),prefix='cache')
         app.include_router(postPostsRouter)
         app.include_router(getPostsRouter)
         app.include_router(getUsersRouter)
@@ -31,11 +35,13 @@ async def lifespan(app: FastAPI):
         #app.include_router(postOffersRouter)
 
         yield
+
         print('end')
     except Exception as e:
         await addLog(e)
 
 app = FastAPI(lifespan=lifespan)
+
 
 @app.exception_handler(RequestValidationError)
 async def validations_req_err(request: Request, exc: RequestValidationError):
@@ -58,6 +64,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 if __name__ == "__main__":
     uvicorn.run("main:app",host="127.0.0.1",port=8000,reload=True)
 

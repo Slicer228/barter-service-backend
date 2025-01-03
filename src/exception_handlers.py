@@ -1,6 +1,8 @@
 from src.exceptions import *
 from src.internal_exceptions import *
 from sqlalchemy.exc import IntegrityError
+from src.utils import addLog
+
 
 def error_handler_users(func):
     async def wrapper(*args):

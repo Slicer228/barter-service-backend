@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Response
-from src.models.responseClasses import SchemaUser
+from src.schemas.response_s import SchemaUser
 from src.service.dao.users import User
 from src.utils import get_user_from_token
 

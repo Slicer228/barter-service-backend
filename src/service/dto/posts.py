@@ -1,6 +1,5 @@
-from src.models.responseClasses import SchemaPost, SchemaPostPhoto, SchemaUser
+from src.schemas.response_s import SchemaPost, SchemaPostPhoto, SchemaUser
 from src.exception_handlers import error_handler_posts
-from src.models.dbModels import User_trades, User_posts, Post_photos, Post_categories, Categories, Trades, Users
 
 
 def postview(func):

@@ -1,6 +1,8 @@
 from src.service.dto.offers import offerView
 
-class OffersView:
+
+
+class Offers:
 
     @staticmethod
     @offerView

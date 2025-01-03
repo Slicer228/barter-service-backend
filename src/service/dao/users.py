@@ -1,10 +1,11 @@
-from src.models.paramClasses import SchemaAddUser, SchemaAuthUser
+from src.schemas.request_s import SchemaAddUser, SchemaAuthUser
 from sqlalchemy import select, insert
 from src.models.dbModels import Users
 from src.db import async_session_maker
 from src.service.dto.users import userview
-from src.service.auth import get_hashed_password, verify_password, create_access_token
-from src.internal_exceptions import NotFound, AuthError, AlreadyExists
+from src.service.auth import get_hashed_password, verify_password
+from src.internal_exceptions import NotFound, AuthError
+
 
 class User:
 

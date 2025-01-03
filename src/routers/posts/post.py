@@ -1,8 +1,6 @@
-from src.utils import addLog
 from fastapi import APIRouter, Depends
 from src.service.dao.posts import Posts
-from src.models.responseClasses import SchemaPost
-from src.models.paramClasses import SchemaAddPost
+from src.schemas.request_s import SchemaAddPost
 from src.utils import get_user_from_token
 
 postPostsRouter = APIRouter(prefix="/posts")
