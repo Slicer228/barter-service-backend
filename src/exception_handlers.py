@@ -18,7 +18,9 @@ def error_handler_users(func):
         except Exception as e:
             await addLog(e)
             raise ParentException()
+
     return wrapper
+
 
 def error_handler_posts(func):
     async def wrapper(*args):

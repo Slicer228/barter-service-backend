@@ -26,6 +26,7 @@ async def get_user_from_token(token: str = Depends(get_token)):
             settings.secret_key,
             settings.encode_algorithm
         )
+        print(payload)
         if payload['sub'] and payload['exp']:
             return int(payload['sub'])
         else:

@@ -9,4 +9,4 @@ bcrypt
 python-jose
 pydantic_settings
 pydantic[email]
-"fastapi-cache2[redis]"
+greenlet

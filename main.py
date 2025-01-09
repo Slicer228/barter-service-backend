@@ -11,12 +11,9 @@ from src.routers.posts.post import postPostsRouter
 from src.routers.posts.get import getPostsRouter
 from src.routers.users.get import getUsersRouter
 from src.routers.users.post import postUsersRouter
-#from src.routers.offers.get import getOffersRouter
+from src.routers.offers.get import getOffersRouter
 #from src.routers.offers.post import postOffersRouter
 from dotenv import load_dotenv
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
 
 
 load_dotenv()
@@ -25,13 +22,11 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        redis = aioredis.from_url('redis://localhost:6379', encoding='utf-8', decode_responses=True)
-        FastAPICache.init(RedisBackend(redis),prefix='cache')
         app.include_router(postPostsRouter)
         app.include_router(getPostsRouter)
         app.include_router(getUsersRouter)
         app.include_router(postUsersRouter)
-        #app.include_router(getOffersRouter)
+        app.include_router(getOffersRouter)
         #app.include_router(postOffersRouter)
 
         yield

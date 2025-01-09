@@ -63,6 +63,21 @@ class User_trades(Base):
     trade_id: Mapped[int] = mapped_column(Integer,ForeignKey('trades.trade_id'),nullable=False)
     utType: Mapped[str] = mapped_column(String(6),nullable=False,primary_key=True)
 
+    active = relationship(
+        'user_posts',
+        primaryjoin="user_trades.post_id == user_posts.post_id and user_posts.status == 'active'",
+    )
+
+    archive = relationship(
+        'user_posts',
+        primaryjoin="user_trades.post_id == user_posts.post_id and user_posts.status == 'archive'",
+    )
+
+    process = relationship(
+        'user_posts',
+        primaryjoin="user_trades.post_id == user_posts.post_id and user_posts.status == 'process'",
+    )
+
 class Post_photos(Base):
     __tablename__ = 'post_photos'
 

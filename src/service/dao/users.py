@@ -1,5 +1,5 @@
 from src.schemas.request_s import SchemaAddUser, SchemaAuthUser
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, column
 from src.models.dbModels import Users
 from src.db import async_session_maker
 from src.service.dto.users import userview
@@ -31,7 +31,7 @@ class User:
     @userview
     async def auth(user: SchemaAuthUser) -> int:
         async with async_session_maker() as session:
-            stmt = select(Users).where(Users.email==user.email)
+            stmt = select(Users).where(Users.email == user.email)
             data = await session.execute(stmt)
             data = data.scalars().first()
             if verify_password(user.password, data.password):
