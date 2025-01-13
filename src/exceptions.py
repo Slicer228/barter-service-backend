@@ -30,9 +30,12 @@ class UserUnauthorized(ParentException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Unauthorized'
 
+
 class PostNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND
-    detail = 'Post not found'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 class PostBlocked(ParentException):
     status_code = status.HTTP_403_FORBIDDEN

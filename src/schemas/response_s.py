@@ -25,5 +25,4 @@ class SchemaPost(BaseModel):
 
 class SchemaOffer(BaseModel):
     post: SchemaPost
-    from_user: SchemaUser
-    source_post: SchemaPost
+    source_post: SchemaPost | None

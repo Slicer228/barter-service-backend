@@ -7,5 +7,5 @@ getOffersRouter = APIRouter(prefix="/offers")
 
 @getOffersRouter.get("/incoming")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
-    await Offers.get_incoming(user_id)
+    return await Offers.get_incoming(user_id)
 

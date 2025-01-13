@@ -1,6 +1,7 @@
+from src.schemas.response_s import SchemaOffer
 
 
-def offerView(func):
+def offer_view(func):
     async def wrapper(*args):
         original = await func(*args)
         if original:
