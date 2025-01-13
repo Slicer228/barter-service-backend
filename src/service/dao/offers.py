@@ -2,7 +2,6 @@ from src.service.dto.offers import offer_view
 from src.db import async_session_maker
 from src.models.dbModels import User_trades, User_posts
 from src.service.dao.posts import Posts
-from src.service.dao.users import User
 from sqlalchemy import select
 from src.schemas.response_s import SchemaOffer, SchemaPost
 from src.exceptions import PostNotFound
@@ -67,11 +66,11 @@ class Offers:
             else:
                 raise PostNotFound('you have not any incoming posts!')
 
-
     @staticmethod
     @offer_view
     async def get_processing(user_id: int):
-        pass
+        async with async_session_maker() as session:
+            ...
 
     @staticmethod
     @offer_view
@@ -82,3 +81,24 @@ class Offers:
     @offer_view
     async def get_archive(user_id: int):
         pass
+
+    @classmethod
+    @offer_view
+    async def send_offer(cls):
+        ...
+
+    @classmethod
+    @offer_view
+    async def accept_offer(cls, trade_id: int, source_post_id: int):
+        ...
+
+    @classmethod
+    @offer_view
+    async def reject_offer(cls, trade_id: int, source_post_id: int):
+        ...
+
+    @classmethod
+    @offer_view
+    async def end_offer(cls, trade_id: int, source_post_id: int):
+        ...
+
