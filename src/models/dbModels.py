@@ -59,23 +59,25 @@ class User_trades(Base):
     __tablename__ = 'user_trades'
 
     user_id: Mapped[int] = mapped_column(Integer,ForeignKey('users.user_id'),nullable=False)
-    post_id: Mapped[int] = mapped_column(Integer,ForeignKey('users.post_id'),nullable=False)
+    post_id: Mapped[int] = mapped_column(Integer,ForeignKey('user_posts.post_id'),nullable=False)
     trade_id: Mapped[int] = mapped_column(Integer,ForeignKey('trades.trade_id'),nullable=False)
     utType: Mapped[str] = mapped_column(String(6),nullable=False,primary_key=True)
 
     active = relationship(
-        'user_posts',
-        primaryjoin="user_trades.post_id == user_posts.post_id and user_posts.status == 'active'",
+        'User_posts',
+        primaryjoin="User_trades.post_id == User_posts.post_id and User_posts.status == 'active'",
     )
 
     archive = relationship(
-        'user_posts',
-        primaryjoin="user_trades.post_id == user_posts.post_id and user_posts.status == 'archive'",
+        'User_posts',
+        primaryjoin="User_trades.post_id == User_posts.post_id and User_posts.status == 'archive'",
+        overlaps="active"
     )
 
     process = relationship(
-        'user_posts',
-        primaryjoin="user_trades.post_id == user_posts.post_id and user_posts.status == 'process'",
+        'User_posts',
+        primaryjoin="User_trades.post_id == User_posts.post_id and User_posts.status == 'process'",
+        overlaps="active"
     )
 
 class Post_photos(Base):

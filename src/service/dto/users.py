@@ -1,6 +1,8 @@
 from src.schemas.response_s import SchemaUser
 from src.exception_handlers import error_handler_users
 from src.models.dbModels import Users
+from src.exceptions import ParentException
+
 
 def userview(func):
     @error_handler_users
@@ -20,7 +22,7 @@ def userview(func):
                         ))
                 return vlst[0] if len(vlst) == 1 else vlst
             else:
-                return original
+                raise ParentException('user dao error!')
         else:
             return None
     return wrapper

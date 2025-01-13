@@ -4,9 +4,15 @@ from fastapi import status, HTTPException
 class ParentException(HTTPException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     detail = 'Internal Server Error'
+    reason = None
 
-    def __init__(self):
+    def __init__(self, reason: str = None):
+        self.reason = reason
         super().__init__(status_code=self.status_code, detail=self.detail)
+
+    def __str__(self):
+        return self.reason
+
 
 class UserNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND

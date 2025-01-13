@@ -14,7 +14,9 @@ class Offers:
             async with session.begin():
                 query = select(User_trades.post_id).join(User_trades.active).where(User_trades.user_id == user_id,User_trades.utType == 'post')
                 data = await session.execute(query)
-                print(data)
+                data = data.scalars().all()
+                for post_id in data:
+                    pass
 
 
     @staticmethod

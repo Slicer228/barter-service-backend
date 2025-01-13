@@ -5,6 +5,8 @@ from src.db import async_session_maker
 from src.service.dto.users import userview
 from src.service.auth import get_hashed_password, verify_password
 from src.internal_exceptions import NotFound, AuthError
+import json
+from src.exception_handlers import error_handler_users
 
 
 class User:
@@ -28,7 +30,7 @@ class User:
                     await session.rollback()
 
     @staticmethod
-    @userview
+    @error_handler_users
     async def auth(user: SchemaAuthUser) -> int:
         async with async_session_maker() as session:
             stmt = select(Users).where(Users.email == user.email)
