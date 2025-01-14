@@ -9,3 +9,15 @@ getOffersRouter = APIRouter(prefix="/offers")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
     return await Offers.get_incoming(user_id)
 
+@getOffersRouter.get("/outgoing")
+async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
+    return await Offers.get_incoming(user_id)
+
+@getOffersRouter.get("/proccessing")
+async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
+    return await Offers.get_incoming(user_id)
+
+@getOffersRouter.get("/archived")
+async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
+    return await Offers.get_incoming(user_id)
+
