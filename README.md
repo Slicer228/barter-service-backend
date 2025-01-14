@@ -1,1 +1,1 @@
-backend written on FastApi, intended to provide berter functions
+backend written on FastApi, intended to provide barter functions
