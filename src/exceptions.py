@@ -18,9 +18,16 @@ class UserNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = 'User not found'
 
+
 class UserAlreadyExists(ParentException):
     status_code = status.HTTP_400_BAD_REQUEST
     detail = 'User already exists'
+
+
+class CannotInteractWithSelf(ParentException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Cannot interact with self'
+
 
 class UserBlocked(ParentException):
     status_code = status.HTTP_403_FORBIDDEN
@@ -40,3 +47,8 @@ class PostNotFound(ParentException):
 class PostBlocked(ParentException):
     status_code = status.HTTP_403_FORBIDDEN
     detail = 'Post blocked'
+
+
+class TradeNotFound(ParentException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = 'Trade not found'
