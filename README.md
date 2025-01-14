@@ -1,3 +1,1 @@
-# GreenBarter-backend
-backend, написанный на хакатоне GORKYCODE. Будет дорабатываться со временем.<br>
-Стек разработки: Python, FastApi, sqlalchemy, aiomysql<br>
+backend written on FastApi, intended to provide berter functions
