@@ -11,13 +11,13 @@ async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
 
 @getOffersRouter.get("/outgoing")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
-    return await Offers.get_incoming(user_id)
+    return await Offers.get_outgoing(user_id)
 
 @getOffersRouter.get("/proccessing")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
-    return await Offers.get_incoming(user_id)
+    return await Offers.get_processing(user_id)
 
 @getOffersRouter.get("/archived")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
-    return await Offers.get_incoming(user_id)
+    return await Offers.get_archive(user_id)
 
