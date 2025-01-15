@@ -10,3 +10,5 @@ python-jose
 pydantic_settings
 pydantic[email]
 greenlet
+redis
+celery
