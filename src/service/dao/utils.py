@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from src.models.dbModels import User_posts, Trades, Users, User_trades
 from src.exceptions import PostNotFound, ParentException, TradeNotFound, UserNotFound
 from src.service.dao.enums import PostStatus, TradeTypes
+from src.db import async_session_maker
 
 
 class _InternalFuncs:
@@ -87,3 +88,21 @@ async def user_is_post_owner(session, user_id: int, trade_id: int):
         return True
     else:
         return False
+
+
+async def get_trade_owner_email(trade_id: int):
+    async with async_session_maker() as session:
+        stmt = select(User_trades.user_id).where(
+            User_trades.trade_id == trade_id,
+            User_trades.utType == TradeTypes.POST.value
+        )
+        data = await session.execute(stmt)
+        data = data.scalars().first()
+
+        stmt = select(Users.email).where(Users.user_id == data)
+        data = await session.execute(stmt)
+        data = data.scalars().first()
+
+        return data
+
+

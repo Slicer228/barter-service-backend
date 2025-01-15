@@ -75,10 +75,12 @@ class Offers:
         async with async_session_maker() as session:
             ...
 
-    @staticmethod
+    @classmethod
     @offer_view
-    async def get_outgoing(user_id: int):
-        pass
+    async def get_outgoing(cls, user_id: int):
+        async with async_session_maker() as session:
+            outgoing_trades = cls._find_trades(session, user_id, TradeTypes.OFFER)
+
 
     @staticmethod
     @offer_view
