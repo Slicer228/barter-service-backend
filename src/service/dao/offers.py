@@ -1,11 +1,11 @@
 from src.service.dto.offers import offer_view
 from src.db import async_session_maker
-from src.models.dbModels import User_trades, User_posts
+from src.models.dbModels import UserTrades, UserPosts
 from src.service.dao.posts import Posts
 from sqlalchemy import select, insert
 from src.schemas.response_s import SchemaOffer, SchemaPost
 from src.exceptions import PostNotFound, CannotInteractWithSelf
-from src.service.dao.enums import TradeTypes, PostStatus
+from src.service.dao.enums import TradeTypes, PostStatus, TradeStatus
 from src.service.dao.utils import is_post_exists, is_trade_exists, is_user_exists, user_is_post_owner
 from src.schemas.request_s import SchemaSendOffer
 
@@ -13,22 +13,27 @@ from src.schemas.request_s import SchemaSendOffer
 class Offers:
 
     @staticmethod
-    async def _find_trades(session, user_id: int, trade_type: TradeTypes):
-        query = select(User_trades.trade_id)\
-            .join(User_trades.active)\
+    async def _find_trades(
+            session, user_id: int,
+            trade_type: TradeTypes,
+            trade_status: TradeStatus = None
+    ):
+        query = select(UserTrades.trade_id)\
+            .join(UserTrades.active)\
             .where(
-            User_trades.user_id == user_id,
-            User_trades.utType == trade_type.value
+            UserTrades.user_id == user_id,
+            UserTrades.utType == trade_type.value,
+            (UserTrades.status == trade_status.value) if trade_status else ...
             )
         data = await session.execute(query)
         return data.scalars().all()
 
     @staticmethod
     async def _find_post_by_trade(session, trade_id: int, status: PostStatus):
-        stmt = select(User_posts.post_id)\
+        stmt = select(UserPosts.post_id)\
                 .where(
-                    User_posts.trade_id == trade_id,
-                    User_posts.status == status.value
+            UserPosts.trade_id == trade_id,
+            UserPosts.status == status.value
                     )
         data = await session.execute(stmt)
         data = data.scalars().first()
@@ -36,9 +41,9 @@ class Offers:
 
     @staticmethod
     async def _generate_offers(session, trade_id: int, target: SchemaPost):
-        stmt = select(User_trades.post_id)\
-            .where(User_trades.trade_id == trade_id,
-                   User_trades.utType == TradeTypes.OFFER.value
+        stmt = select(UserTrades.post_id)\
+            .where(UserTrades.trade_id == trade_id,
+                   UserTrades.utType == TradeTypes.OFFER.value
                    )
         data = await session.execute(stmt)
         data = data.scalars().all()
@@ -79,7 +84,8 @@ class Offers:
     @offer_view
     async def get_outgoing(cls, user_id: int):
         async with async_session_maker() as session:
-            outgoing_trades = cls._find_trades(session, user_id, TradeTypes.OFFER)
+            outgoing_trades = cls._find_trades(session, user_id, TradeTypes.OFFER, trade_status=TradeStatus.ACTIVE)
+
 
 
     @staticmethod
@@ -99,7 +105,7 @@ class Offers:
                     if await user_is_post_owner(session, source_user_id, offer.trade_id):
                         raise CannotInteractWithSelf
 
-                    stmt = insert(User_trades).values(
+                    stmt = insert(UserTrades).values(
                         user_id=source_user_id,
                         post_id=offer.source_post_id,
                         trade_id=offer.trade_id,

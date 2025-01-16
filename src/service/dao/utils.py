@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from src.models.dbModels import User_posts, Trades, Users, User_trades
+from src.models.dbModels import UserPosts, Trades, Users, UserTrades
 from src.exceptions import PostNotFound, ParentException, TradeNotFound, UserNotFound
 from src.service.dao.enums import PostStatus, TradeTypes
 from src.db import async_session_maker
@@ -16,14 +16,14 @@ class _InternalFuncs:
             raise ParentException('call error')
 
         if post_id:
-            return select(User_posts.post_id).where(
-            User_posts.post_id == post_id,
-            User_posts.status == post_status.value
+            return select(UserPosts.post_id).where(
+                UserPosts.post_id == post_id,
+                UserPosts.status == post_status.value
             )
         else:
-            return select(User_posts.trade_id).where(
-                User_posts.trade_id == trade_id,
-                User_posts.status == post_status.value
+            return select(UserPosts.trade_id).where(
+                UserPosts.trade_id == trade_id,
+                UserPosts.status == post_status.value
             )
 
     @staticmethod
@@ -73,10 +73,10 @@ async def is_user_exists(session, user_id: int):
 
 
 async def user_is_post_owner(session, user_id: int, trade_id: int):
-    stmt = select(User_trades.user_id).where(
-        User_trades.user_id == user_id,
-        User_trades.trade_id == trade_id,
-        User_trades.utType == TradeTypes.POST.value
+    stmt = select(UserTrades.user_id).where(
+        UserTrades.user_id == user_id,
+        UserTrades.trade_id == trade_id,
+        UserTrades.utType == TradeTypes.POST.value
     )
     data = await session.execute(stmt)
     data = data.scalars().all()
@@ -92,9 +92,9 @@ async def user_is_post_owner(session, user_id: int, trade_id: int):
 
 async def get_trade_owner_email(trade_id: int):
     async with async_session_maker() as session:
-        stmt = select(User_trades.user_id).where(
-            User_trades.trade_id == trade_id,
-            User_trades.utType == TradeTypes.POST.value
+        stmt = select(UserTrades.user_id).where(
+            UserTrades.trade_id == trade_id,
+            UserTrades.utType == TradeTypes.POST.value
         )
         data = await session.execute(stmt)
         data = data.scalars().first()

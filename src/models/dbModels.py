@@ -20,7 +20,7 @@ class Users(Base):
     green_points: Mapped[int] = mapped_column(Integer, default=0)
 
 
-class User_posts(Base):
+class UserPosts(Base):
     __tablename__ = 'user_posts'
 
     post_id: Mapped[int] = mapped_column(primary_key=True,unique=True,autoincrement=True)
@@ -39,7 +39,7 @@ class Categories(Base):
     green_score: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
-class Post_categories(Base):
+class PostCategories(Base):
     __tablename__ = 'post_categories'
 
     post_id: Mapped[int] = mapped_column(ForeignKey('user_posts.post_id'), nullable=False)
@@ -48,7 +48,7 @@ class Post_categories(Base):
 
     category_names = relationship(
         'Categories',
-        primaryjoin="Post_categories.category_id == Categories.category_id"
+        primaryjoin="PostCategories.category_id == Categories.category_id"
     )
 
 
@@ -59,7 +59,7 @@ class Trades(Base):
     date: Mapped[date] = mapped_column(TIMESTAMP, nullable=False)
 
 
-class User_trades(Base):
+class UserTrades(Base):
     __tablename__ = 'user_trades'
 
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'), nullable=False)
@@ -69,10 +69,10 @@ class User_trades(Base):
     status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
 
 
-class Post_photos(Base):
+class PostPhotos(Base):
     __tablename__ = 'post_photos'
 
-    post_id: Mapped[int] = mapped_column(Integer, ForeignKey('user_posts.post_id'),nullable=False)
+    post_id: Mapped[int] = mapped_column(Integer, ForeignKey('user_posts.post_id'), nullable=False)
     post_photo: Mapped[str] = mapped_column(BLOB, nullable=False)
-    post_photo_name: Mapped[str] = mapped_column(String(32), nullable=False,primary_key=True)
+    post_photo_name: Mapped[str] = mapped_column(String(32), nullable=False, primary_key=True)
 

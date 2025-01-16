@@ -1,6 +1,6 @@
 from src.service.dto.posts import postview
 from src.schemas.request_s import SchemaAddPost
-from src.models.dbModels import User_trades, User_posts, Post_photos, Post_categories, Categories, Trades
+from src.models.dbModels import UserTrades, UserPosts, PostPhotos, PostCategories, Categories, Trades
 from src.service.dao.users import User
 from sqlalchemy import select, insert
 from src.db import async_session_maker
@@ -29,7 +29,7 @@ class Posts:
                         stmt1 = insert(Trades)
                         data = await session.execute(stmt1)
                         trade_id = data.lastrowid
-                        stmt2 = insert(User_posts).values(
+                        stmt2 = insert(UserPosts).values(
                             post_name=post.post_name,
                             post_type=post.post_type,
                             trade_id=trade_id,
@@ -39,7 +39,7 @@ class Posts:
 
                         post_id = data.lastrowid
 
-                        stmt = insert(User_trades).values(
+                        stmt = insert(UserTrades).values(
                             user_id=user_id,
                             post_id=post_id,
                             trade_id=trade_id,
@@ -49,7 +49,7 @@ class Posts:
                         if post.categories:
                             i = 0
                             for cat in post.categories:
-                                stmt = insert(Post_categories).values(
+                                stmt = insert(PostCategories).values(
                                     post_id=post_id,
                                     category_id=cat,
                                     category_type='main' if not i else 'secondary')
@@ -58,9 +58,9 @@ class Posts:
 
                         if post.photos:
                             for photo in post.photos:
-                                stmt = insert(Post_photos).values(post_photo=bytes(photo.post_photo, 'utf8'),
-                                                                  post_photo_name=photo.post_photo_name,
-                                                                  post_id=post_id)
+                                stmt = insert(PostPhotos).values(post_photo=bytes(photo.post_photo, 'utf8'),
+                                                                 post_photo_name=photo.post_photo_name,
+                                                                 post_id=post_id)
                                 await session.execute(stmt)
 
                         await session.commit()
@@ -95,11 +95,11 @@ class Posts:
     async def get(post_id: int | list[int]):
 
         async def get_one(post_id: int) -> tuple:
-            stmtP = select(User_posts).where(User_posts.post_id == post_id)
-            stmtPP = select(Post_photos).where(Post_photos.post_id == post_id)
-            stmtC = (select(Categories).join(Post_categories.category_names)
-                .where(Post_categories.post_id == post_id)
-                .order_by(Post_categories.category_type))
+            stmtP = select(UserPosts).where(UserPosts.post_id == post_id)
+            stmtPP = select(PostPhotos).where(PostPhotos.post_id == post_id)
+            stmtC = (select(Categories).join(PostCategories.category_names)
+                     .where(PostCategories.post_id == post_id)
+                     .order_by(PostCategories.category_type))
             async with async_session_maker() as session:
                 post = await session.execute(stmtP)
                 post = post.scalars().first()
@@ -107,7 +107,7 @@ class Posts:
                 photos = photos.scalars().all()
                 categories = await session.execute(stmtC)
                 categories = categories.scalars().all()
-                stmt = select(User_trades.user_id).where(User_trades.post_id == post_id, User_trades.utType == 'post')
+                stmt = select(UserTrades.user_id).where(UserTrades.post_id == post_id, UserTrades.utType == 'post')
                 usr_id = await session.execute(stmt)
                 usr_id = usr_id.scalars().first()
                 try:
