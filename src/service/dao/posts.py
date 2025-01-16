@@ -4,6 +4,7 @@ from src.models.dbModels import UserTrades, UserPosts, PostPhotos, PostCategorie
 from src.service.dao.users import User
 from sqlalchemy import select, insert
 from src.db import async_session_maker
+from src.exceptions import ParentException
 
 
 class Posts:
@@ -93,7 +94,6 @@ class Posts:
     @staticmethod
     @postview
     async def get(post_id: int | list[int]):
-
         async def get_one(post_id: int) -> tuple:
             stmtP = select(UserPosts).where(UserPosts.post_id == post_id)
             stmtPP = select(PostPhotos).where(PostPhotos.post_id == post_id)
@@ -112,9 +112,9 @@ class Posts:
                 usr_id = usr_id.scalars().first()
                 try:
                     user = await User.get_user(usr_id)
-                    return (post, photos, categories, user)
+                    return post, photos, categories, user
                 except BaseException:
-                    pass
+                    raise ParentException('Error in getting user')
 
         if isinstance(post_id, list):
             psts = []

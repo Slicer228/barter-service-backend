@@ -52,3 +52,8 @@ class PostBlocked(ParentException):
 class TradeNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = 'Trade not found'
+
+
+class OfferNotFound(ParentException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = 'Offer not found'
