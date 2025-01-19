@@ -26,8 +26,9 @@ class User:
                     result = await session.execute(stmt)
                     await session.commit()
                     return result.lastrowid
-                finally:
+                except BaseException as e:
                     await session.rollback()
+                    raise e
 
     @staticmethod
     @error_handler_users
@@ -69,8 +70,9 @@ class User:
             async with session.begin():
                 try:
                     pass
-                finally:
+                except BaseException as e:
                     await session.rollback()
+                    raise e
 
     @staticmethod
     @userview
@@ -79,8 +81,9 @@ class User:
             async with session.begin():
                 try:
                     pass
-                finally:
+                except BaseException as e:
                     await session.rollback()
+                    raise e
 
     @staticmethod
     @userview
@@ -89,8 +92,9 @@ class User:
             async with session.begin():
                 try:
                     pass
-                finally:
+                except BaseException as e:
                     await session.rollback()
+                    raise e
 
     @staticmethod
     @userview
@@ -99,8 +103,9 @@ class User:
             async with session.begin():
                 try:
                     pass
-                finally:
+                except BaseException as e:
                     await session.rollback()
+                    raise e
 
     @staticmethod
     @userview
@@ -109,5 +114,6 @@ class User:
             async with session.begin():
                 try:
                     pass
-                finally:
+                except BaseException as e:
                     await session.rollback()
+                    raise e

@@ -8,13 +8,16 @@ class SchemaUser(BaseModel):
     green_scores: int
     green_points: int
 
+
 class SchemaPostPhoto(BaseModel):
     post_photo_name: str
     post_photo: str
 
+
 class SchemaPost(BaseModel):
     owner: SchemaUser | None
     post_id: int
+    trade_id: int
     post_name: str
     post_description: str | None
     post_type: str
@@ -25,4 +28,4 @@ class SchemaPost(BaseModel):
 
 class SchemaOffer(BaseModel):
     post: SchemaPost
-    source_post: SchemaPost | None
+    source_post: SchemaPost | SchemaUser

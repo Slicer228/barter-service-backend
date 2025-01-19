@@ -16,8 +16,8 @@ class TradeTypes(enum.Enum):
 
 class PostStatus(enum.Enum):
     ACTIVE = 'active'
-    ARCHIVE = 'archive'
-    PROCESS = 'process'
+    ARCHIVE = 'archived'
+    PROCESS = 'in_process'
 
 
 class PostTypes(enum.Enum):

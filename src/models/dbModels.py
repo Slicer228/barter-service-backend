@@ -28,7 +28,7 @@ class UserPosts(Base):
     post_description: Mapped[str] = mapped_column(String(1024), default='Пользователь не оставил описания')
     post_type: Mapped[str] = mapped_column(String(5), nullable=False)
     trade_id: Mapped[int] = mapped_column(Integer, ForeignKey('trades.trade_id'), nullable=False)
-    status: Mapped[str] = mapped_column(String(7), nullable=False, default='active')
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
 
 
 class Categories(Base):
@@ -55,17 +55,18 @@ class PostCategories(Base):
 class Trades(Base):
     __tablename__ = 'trades'
 
-    trade_id: Mapped[int] = mapped_column(Integer, primary_key=True,autoincrement=True,unique=True)
+    trade_id: Mapped[int] = mapped_column(Integer, primary_key=True,autoincrement=True, unique=True)
     date: Mapped[date] = mapped_column(TIMESTAMP, nullable=False)
 
 
 class UserTrades(Base):
     __tablename__ = 'user_trades'
 
+    id = mapped_column(Integer, primary_key=True, autoincrement=True)  # surrogate column
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.user_id'), nullable=False)
     post_id: Mapped[int] = mapped_column(Integer, ForeignKey('user_posts.post_id'), nullable=False)
     trade_id: Mapped[int] = mapped_column(Integer, ForeignKey('trades.trade_id'), nullable=False)
-    utType: Mapped[str] = mapped_column(String(6), nullable=False, primary_key=True)
+    utType: Mapped[str] = mapped_column(String(6), nullable=False)
     status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
 
 

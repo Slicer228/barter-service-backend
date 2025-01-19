@@ -7,7 +7,7 @@ password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create_access_token(identity) -> str:
     to_encode = identity.copy()
-    expire = datetime.now(UTC) + timedelta(minutes=30)
+    expire = datetime.now(UTC) + timedelta(minutes=300)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.encode_algorithm)
     return encoded_jwt

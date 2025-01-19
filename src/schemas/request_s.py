@@ -28,4 +28,4 @@ class SchemaAuthUser(BaseModel):
 
 class SchemaSendOffer(BaseModel):
     trade_id: int
-    source_post_id: int
+    source_post_id: int = 0

@@ -15,8 +15,9 @@ class Posts:
             async with session.begin():
                 try:
                     pass
-                finally:
+                except BaseException as e:
                     await session.rollback()
+                    raise e
 
     @staticmethod
     @postview
@@ -66,8 +67,9 @@ class Posts:
 
                         await session.commit()
                         return post_id
-                    finally:
+                    except BaseException as e:
                         await session.rollback()
+                        raise e
 
         if isinstance(post, list):
             posts = []
@@ -115,7 +117,8 @@ class Posts:
                     return post, photos, categories, user
                 except BaseException:
                     raise ParentException('Error in getting user')
-
+        if post_id == 0:
+            return []
         if isinstance(post_id, list):
             psts = []
             for pst in post_id:

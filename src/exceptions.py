@@ -57,3 +57,9 @@ class TradeNotFound(ParentException):
 class OfferNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = 'Offer not found'
+
+
+class NotYours(ParentException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Not Yours'
+
