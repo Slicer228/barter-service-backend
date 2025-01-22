@@ -11,7 +11,7 @@ class ParentException(HTTPException):
         super().__init__(status_code=self.status_code, detail=self.detail)
 
     def __str__(self):
-        return self.reason
+        return self.reason if self.reason else self.detail
 
 
 class UserNotFound(ParentException):
@@ -41,9 +41,6 @@ class UserUnauthorized(ParentException):
 
 class PostNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
 
 class PostBlocked(ParentException):

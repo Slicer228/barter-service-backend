@@ -1,8 +1,8 @@
 from src.utils import addLog
-from fastapi import FastAPI,HTTPException, Request, Response
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestErrorModel, ResponseValidationError, RequestValidationError
+from fastapi.exceptions import ResponseValidationError, RequestValidationError
 from fastapi.encoders import jsonable_encoder
 from src.networkCfg import origins
 import uvicorn
@@ -37,12 +37,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.exception_handler(RequestValidationError)
 async def validations_req_err(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=400,
-        content=jsonable_encoder({'detail': exc.errors(), 'error': 'bad request'})
+        content=jsonable_encoder({'detail': exc, 'error': 'bad request'})
     )
+app.add_exception_handler(RequestValidationError, validations_req_err)
+
 
 @app.exception_handler(ResponseValidationError)
 async def validations_resp_err(response: Response, exc: ResponseValidationError):
