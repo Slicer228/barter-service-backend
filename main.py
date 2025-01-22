@@ -12,7 +12,7 @@ from src.routers.posts.get import getPostsRouter
 from src.routers.users.get import getUsersRouter
 from src.routers.users.post import postUsersRouter
 from src.routers.offers.get import router as get_offers_router
-from src.routers.offers.post import postOffersRouter
+from src.routers.offers.post import router as post_offers_router
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
         app.include_router(getUsersRouter)
         app.include_router(postUsersRouter)
         app.include_router(get_offers_router)
-        app.include_router(postOffersRouter)
+        app.include_router(post_offers_router)
 
         yield
 
