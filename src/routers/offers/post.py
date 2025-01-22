@@ -18,11 +18,11 @@ async def send_offer(offer: SchemaSendOffer, user_id: int = Depends(get_user_fro
 
 
 @router.post("/reject")
-async def send_offer(offer: SchemaSendOffer, user_id: int = Depends(get_user_from_token)):
-    return await Offers.reject_offer(offer.trade_id, offer.source_post_id, user_id)
+async def send_offer(offer: SchemaSendOffer, processed: bool, user_id: int = Depends(get_user_from_token)):
+    return await Offers.reject_offer(offer.trade_id, offer.source_post_id, user_id, processed)
 
 
 @router.post("/end")
 async def send_offer(offer: SchemaSendOffer, user_id: int = Depends(get_user_from_token)):
-    #await Offers.end_offer(user_id, offer)
-    ...
+    await Offers.end_offer(offer.trade_id, offer.source_post_id, user_id)
+

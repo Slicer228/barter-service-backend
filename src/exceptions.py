@@ -33,6 +33,7 @@ class UserBlocked(ParentException):
     status_code = status.HTTP_403_FORBIDDEN
     detail = 'User blocked'
 
+
 class UserUnauthorized(ParentException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Unauthorized'
@@ -43,6 +44,7 @@ class PostNotFound(ParentException):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
 
 class PostBlocked(ParentException):
     status_code = status.HTTP_403_FORBIDDEN
@@ -57,6 +59,11 @@ class TradeNotFound(ParentException):
 class OfferNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = 'Offer not found'
+
+
+class OfferAlreadyExists(ParentException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Offer already exists'
 
 
 class NotYours(ParentException):

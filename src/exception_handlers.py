@@ -39,11 +39,8 @@ def error_handler_posts(func):
 
 def error_handler_offers(func):
     async def wrapper(*args):
-        try:
-            result = await func(*args)
-            return result
-        except BaseException as e:
-            await addLog(e)
-            raise ParentException()
+        result = await func(*args)
+        return result
+
 
     return wrapper

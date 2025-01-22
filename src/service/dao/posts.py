@@ -77,9 +77,7 @@ class Posts:
                 posts.append(await add_one(pst))
             return posts
         else:
-           return [await add_one(post)]
-
-
+            return [await add_one(post)]
 
     @staticmethod
     async def get_all():
