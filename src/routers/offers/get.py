@@ -2,22 +2,25 @@ from fastapi import APIRouter, Depends
 from src.utils import get_user_from_token
 from src.service.dao.offers import Offers
 
-getOffersRouter = APIRouter(prefix="/offers")
+router = APIRouter(prefix="/offers")
 
 
-@getOffersRouter.get("/incoming")
+@router.get("/incoming")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
     return await Offers.get_incoming(user_id)
 
-@getOffersRouter.get("/outgoing")
+
+@router.get("/outgoing")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
     return await Offers.get_outgoing(user_id)
 
-@getOffersRouter.get("/proccessing")
+
+@router.get("/processing")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
     return await Offers.get_processing(user_id)
 
-@getOffersRouter.get("/archived")
+
+@router.get("/archived")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
     return await Offers.get_archive(user_id)
 

@@ -324,6 +324,7 @@ class Offers:
                 except BaseException as e:
                     await session.rollback()
                     raise e
+
     @classmethod
     @offer_view
     async def end_offer(cls, trade_id: int, source_post_id: int):
