@@ -15,7 +15,7 @@ async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
     return await Offers.get_outgoing(user_id)
 
 
-@router.get("/processing")
+@router.get("/processed")
 async def get_incoming_offers(user_id: int = Depends(get_user_from_token)):
     return await Offers.get_processing(user_id)
 

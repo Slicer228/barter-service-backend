@@ -1,9 +1,8 @@
 from src.schemas.response_s import SchemaPost, SchemaPostPhoto, SchemaUser
-from src.exception_handlers import error_handler_posts
 
 
 def postview(func):
-    @error_handler_posts
+
     async def wrapper(*args):
         original: list[int] | list[tuple] = await func(*args)
         if original:

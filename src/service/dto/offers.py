@@ -1,9 +1,7 @@
-from src.exception_handlers import error_handler_offers
 
 
 def offer_view(func):
 
-    @error_handler_offers
     async def wrapper(*args):
         original = await func(*args)
         if original:

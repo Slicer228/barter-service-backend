@@ -1,46 +1,23 @@
 from src.exceptions import *
-from src.internal_exceptions import *
 from sqlalchemy.exc import IntegrityError
 from src.utils import addLog
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from fastapi import Request
+from src.exceptions import (
+    ParentException,
+    UserNotFound,
+    UserAlreadyExists,
+    CannotInteractWithSelf,
+    UserUnauthorized,
+    UserBlocked,
+    PostBlocked,
+    PostNotFound,
+    TradeNotFound,
+    OfferNotFound,
+    OfferAlreadyExists,
+    NotYours
+)
 
-
-def error_handler_users(func):
-    async def wrapper(*args):
-        try:
-            result = await func(*args)
-            return result
-        except IntegrityError:
-            raise UserAlreadyExists()
-        except NotFound:
-            raise UserNotFound()
-        except AuthError:
-            raise UserUnauthorized()
-        except Exception as e:
-            await addLog(e)
-            raise ParentException()
-
-    return wrapper
-
-
-def error_handler_posts(func):
-    async def wrapper(*args):
-        try:
-            result = await func(*args)
-            return result
-        except NotFound:
-            raise PostNotFound()
-        except NoAccess:
-            raise PostBlocked()
-        except Exception as e:
-            await addLog(e)
-            raise ParentException()
-    return wrapper
-
-
-def error_handler_offers(func):
-    async def wrapper(*args):
-        result = await func(*args)
-        return result
-
-
-    return wrapper
+async def parent_exception_handler(request: Request, exc: ParentException) -> JSONResponse:
+    ...

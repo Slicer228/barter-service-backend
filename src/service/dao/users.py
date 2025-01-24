@@ -1,12 +1,11 @@
 from src.schemas.request_s import SchemaAddUser, SchemaAuthUser
-from sqlalchemy import select, insert, column
+from sqlalchemy import select, insert
 from src.models.dbModels import Users
 from src.db import async_session_maker
 from src.service.dto.users import userview
 from src.service.auth import get_hashed_password, verify_password
 from src.internal_exceptions import NotFound, AuthError
 import json
-from src.exception_handlers import error_handler_users
 
 
 class User:
@@ -31,7 +30,6 @@ class User:
                     raise e
 
     @staticmethod
-    @error_handler_users
     async def auth(user: SchemaAuthUser) -> int:
         async with async_session_maker() as session:
             stmt = select(Users).where(Users.email == user.email)
