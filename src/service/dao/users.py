@@ -1,10 +1,10 @@
-from src.schemas.request_s import SchemaAddUser, SchemaAuthUser
+from src.schemas.request import SchemaAddUser, SchemaAuthUser
 from sqlalchemy import select, insert
-from src.models.dbModels import Users
-from src.db import async_session_maker
+from src.models.db import Users
+from src.service.db import async_session_maker
 from src.service.dto.users import userview
 from src.service.auth import get_hashed_password, verify_password
-from src.internal_exceptions import NotFound, AuthError
+from src.service.exceptions import UserUnauthorized, UserNotFound
 import json
 
 
@@ -38,7 +38,7 @@ class User:
             if verify_password(user.password, data.password):
                 return data.user_id
             else:
-                raise AuthError()
+                raise UserUnauthorized()
 
     @staticmethod
     @userview
@@ -59,7 +59,7 @@ class User:
                 if result:
                     return [result]
                 else:
-                    raise NotFound()
+                    raise UserNotFound()
 
     @staticmethod
     @userview

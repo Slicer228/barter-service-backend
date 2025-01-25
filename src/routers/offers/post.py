@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
-from src.utils import get_user_from_token
-from src.schemas.request_s import SchemaSendOffer
+from src.service.utils import get_user_from_token
+from src.schemas.request import SchemaSendOffer
 from src.service.dao.offers import Offers
 
 

@@ -1,10 +1,10 @@
-from src.utils import addLog
+from src.service.utils import addLog
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import ResponseValidationError, RequestValidationError
 from fastapi.encoders import jsonable_encoder
-from src.networkCfg import origins
+from src.cors import origins
 import uvicorn
 from contextlib import asynccontextmanager
 from src.routers.posts.post import postPostsRouter

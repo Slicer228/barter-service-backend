@@ -1,9 +1,8 @@
 from sqlalchemy import select
-from sqlalchemy.orm import Session
-from src.models.dbModels import UserPosts, Trades, Users, UserTrades
-from src.exceptions import PostNotFound, ParentException, TradeNotFound, UserNotFound
-from src.service.dao.enums import PostStatus, TradeTypes
-from src.db import async_session_maker
+from src.models.db import UserPosts, Trades, Users, UserTrades
+from src.service.exceptions import PostNotFound, ParentException, TradeNotFound, UserNotFound
+from src.service.dao.enums import TradeTypes
+from src.service.db import async_session_maker
 
 
 class _InternalFuncs:

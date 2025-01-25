@@ -1,4 +1,4 @@
-from src.schemas.response_s import SchemaPost, SchemaPostPhoto, SchemaUser
+from src.schemas.response import SchemaPost, SchemaPostPhoto, SchemaUser
 
 
 def postview(func):

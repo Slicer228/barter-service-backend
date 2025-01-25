@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from src.schemas.response_s import SchemaPost
+from src.schemas.response import SchemaPost
 from src.service.dao.posts import Posts
 
 

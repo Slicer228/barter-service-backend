@@ -1,10 +1,10 @@
 from src.service.dto.offers import offer_view
-from src.db import async_session_maker
-from src.models.dbModels import UserTrades, UserPosts
+from src.service.db import async_session_maker
+from src.models.db import UserTrades, UserPosts
 from src.service.dao.posts import Posts
-from sqlalchemy import select, insert, update, delete
-from src.schemas.response_s import SchemaOffer
-from src.exceptions import OfferNotFound, CannotInteractWithSelf, NotYours, TradeNotFound, OfferAlreadyExists
+from sqlalchemy import select, insert, update
+from src.schemas.response import SchemaOffer
+from src.service.exceptions import OfferNotFound, CannotInteractWithSelf, NotYours, TradeNotFound, OfferAlreadyExists
 from src.service.dao.enums import TradeTypes, PostStatus, TradeStatus
 from src.service.dao.utils import (
     is_post_exists,
