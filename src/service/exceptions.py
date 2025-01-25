@@ -1,4 +1,6 @@
 from fastapi import status, HTTPException
+import inspect
+import sys
 
 
 class ParentException(HTTPException):
@@ -67,3 +69,5 @@ class NotYours(ParentException):
     status_code = status.HTTP_400_BAD_REQUEST
     detail = 'Not Yours'
 
+
+collection = [cls for _, cls in inspect.getmembers(sys.modules[__name__], inspect.isclass) if cls.__module__ == __name__]

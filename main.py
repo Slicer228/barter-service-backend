@@ -7,13 +7,15 @@ from fastapi.encoders import jsonable_encoder
 from src.cors import origins
 import uvicorn
 from contextlib import asynccontextmanager
-from src.routers.posts.post import postPostsRouter
-from src.routers.posts.get import getPostsRouter
-from src.routers.users.get import getUsersRouter
-from src.routers.users.post import postUsersRouter
+from src.routers.posts.post import router as post_post_router
+from src.routers.posts.get import router as get_post_router
+from src.routers.users.get import router as get_users_router
+from src.routers.users.post import router as post_users_router
 from src.routers.offers.get import router as get_offers_router
 from src.routers.offers.post import router as post_offers_router
 from dotenv import load_dotenv
+from src.service.exception_handlers import constructors
+from typing import Any
 
 load_dotenv()
 
@@ -21,10 +23,10 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        app.include_router(postPostsRouter)
-        app.include_router(getPostsRouter)
-        app.include_router(getUsersRouter)
-        app.include_router(postUsersRouter)
+        app.include_router(post_post_router)
+        app.include_router(get_post_router)
+        app.include_router(get_users_router)
+        app.include_router(post_users_router)
         app.include_router(get_offers_router)
         app.include_router(post_offers_router)
 
@@ -37,20 +39,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-async def validations_req_err(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=400,
-        content=jsonable_encoder({'detail': exc, 'error': 'bad request'})
-    )
-app.add_exception_handler(RequestValidationError, validations_req_err)
+for exc_construct in constructors:
+    app.add_exception_handler(*exc_construct)
 
-
-@app.exception_handler(ResponseValidationError)
-async def validations_resp_err(response: Response, exc: ResponseValidationError):
-    return JSONResponse(
-        status_code=500,
-        content=jsonable_encoder({'detail': exc.errors(), 'error': 'bad response'})
-    )
 
 app.add_middleware(
     CORSMiddleware,
