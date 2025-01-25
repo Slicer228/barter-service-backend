@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, Integer, BLOB, Column, TIMESTAMP
+from sqlalchemy import ForeignKey, String, Integer, BLOB, Column, TIMESTAMP, Boolean
 from typing import List, Optional
 from datetime import date
 
@@ -14,10 +14,11 @@ class Users(Base):
     user_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     username: Mapped[str] = mapped_column(String(16), nullable=False)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
-    email: Mapped[str] = mapped_column(String(32), nullable=False,unique=True)
+    email: Mapped[str] = mapped_column(String(32), nullable=False, unique=True)
     avatar: Mapped[str] = mapped_column(BLOB, default=None)
     green_scores: Mapped[int] = mapped_column(Integer, default=0)
     green_points: Mapped[int] = mapped_column(Integer, default=0)
+    verificated: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 class UserPosts(Base):
@@ -76,4 +77,13 @@ class PostPhotos(Base):
     post_id: Mapped[int] = mapped_column(Integer, ForeignKey('user_posts.post_id'), nullable=False)
     post_photo: Mapped[str] = mapped_column(BLOB, nullable=False)
     post_photo_name: Mapped[str] = mapped_column(String(32), nullable=False, primary_key=True)
+
+
+class EmailVerification(Base):
+    __tablename__ = 'email_verification'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(String(100), nullable=False)
+    secret_code: Mapped[str] = mapped_column(String(100), default=None)
+    expiration_time: Mapped[date] = mapped_column(TIMESTAMP, default=None)
 

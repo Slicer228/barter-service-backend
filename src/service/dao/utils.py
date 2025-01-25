@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from src.models.db import UserPosts, Trades, Users, UserTrades
-from src.service.exceptions import PostNotFound, ParentException, TradeNotFound, UserNotFound
+from src.service.exceptions import PostNotFound, ParentException, TradeNotFound, UserNotFound, UserAlreadyExists
 from src.service.dao.enums import TradeTypes
 from src.service.db import async_session_maker
 
@@ -122,3 +122,28 @@ async def check_post_params(session, *params):
         ...
     else:
         raise PostNotFound("Invalid parameters")
+
+
+async def email_exists(session, email: str):
+    stmt = select(Users).where(Users.email == email)
+    data = await session.execute(stmt)
+    data = data.scalars().all()
+    if data and len(data) == 1:
+        raise UserAlreadyExists("Email already exists")
+    else:
+        ...
+
+
+async def is_user_verificated(session, user_id: int = None, email: str = None):
+    if not user_id and not email:
+        raise ParentException('no parameters')
+    stmt = select(Users).where(
+        (Users.user_id == user_id) if user_id else (Users.email == email),
+        Users.verificated == True
+    )
+
+    data = await session.execute(stmt)
+    data = data.scalars().all()
+    if data and len(data) == 1:
+        return True
+    return False

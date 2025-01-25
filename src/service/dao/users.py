@@ -6,6 +6,7 @@ from src.service.dto.users import userview
 from src.service.auth import get_hashed_password, verify_password
 from src.service.exceptions import UserUnauthorized, UserNotFound
 import json
+from src.service.dao.utils import email_exists
 
 
 class User:
@@ -14,13 +15,17 @@ class User:
     @userview
     async def set(usrobj: SchemaAddUser) -> int:
         password = get_hashed_password(usrobj.password)
-        stmt = insert(Users).values(username=usrobj.username,
-                                    password=password,
-                                    avatar=bytes(json.dumps(usrobj.avatar),'utf8'),
-                                    email=usrobj.email
-                                    )
+
         async with async_session_maker() as session:
+
+            await email_exists(session, usrobj.email)
+
             async with session.begin():
+                stmt = insert(Users).values(username=usrobj.username,
+                                            password=password,
+                                            avatar=bytes(json.dumps(usrobj.avatar), 'utf8'),
+                                            email=usrobj.email
+                                            )
                 try:
                     result = await session.execute(stmt)
                     await session.commit()
