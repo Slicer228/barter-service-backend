@@ -21,7 +21,7 @@ def userview(func):
                         ))
                 return vlst[0] if len(vlst) == 1 else vlst
             else:
-                raise ParentException('user dao error!')
+                raise ParentException
         else:
             return None
     return wrapper

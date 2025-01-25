@@ -12,6 +12,7 @@ async def create_user(response: Response,user: SchemaAddUser):
     response.set_cookie('access_token', token, httponly=True)
     return None
 
+
 @router.post("/auth/")
 async def login_user(response: Response,user: SchemaAuthUser):
     user_id = await User.auth(user)

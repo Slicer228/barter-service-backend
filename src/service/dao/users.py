@@ -1,6 +1,6 @@
 from src.schemas.request import SchemaAddUser, SchemaAuthUser
 from sqlalchemy import select, insert
-from src.models.db import Users
+from src.models.db import Users, EmailVerification
 from src.service.db import async_session_maker
 from src.service.dto.users import userview
 from src.service.auth import get_hashed_password, verify_password
@@ -11,22 +11,23 @@ from src.service.dao.utils import email_exists
 
 class User:
 
-    @staticmethod
-    @userview
-    async def set(usrobj: SchemaAddUser) -> int:
+    @classmethod
+    async def set(cls, usrobj: SchemaAddUser) -> int:
         password = get_hashed_password(usrobj.password)
 
         async with async_session_maker() as session:
 
-            await email_exists(session, usrobj.email)
-
             async with session.begin():
-                stmt = insert(Users).values(username=usrobj.username,
-                                            password=password,
-                                            avatar=bytes(json.dumps(usrobj.avatar), 'utf8'),
-                                            email=usrobj.email
-                                            )
                 try:
+                    await email_exists(session, usrobj.email)
+
+                    stmt = insert(EmailVerification).values(email=usrobj.email)
+                    await session.execute(stmt)
+                    stmt = insert(Users).values(username=usrobj.username,
+                                                password=password,
+                                                avatar=bytes(json.dumps(usrobj.avatar), 'utf8'),
+                                                email=usrobj.email
+                                                )
                     result = await session.execute(stmt)
                     await session.commit()
                     return result.lastrowid

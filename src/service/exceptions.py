@@ -10,7 +10,6 @@ class ParentException(HTTPException):
 
     def __init__(self, reason: str = None):
         self.reason = reason
-        super().__init__(status_code=self.status_code, detail=self.detail)
 
     def __str__(self):
         return self.reason if self.reason else self.detail
