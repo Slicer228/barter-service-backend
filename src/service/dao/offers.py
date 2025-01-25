@@ -4,7 +4,14 @@ from src.models.db import UserTrades, UserPosts
 from src.service.dao.posts import Posts
 from sqlalchemy import select, insert, update
 from src.schemas.response import SchemaOffer
-from src.service.exceptions import OfferNotFound, CannotInteractWithSelf, NotYours, TradeNotFound, OfferAlreadyExists
+from src.service.exceptions import (
+    OfferNotFound,
+    CannotInteractWithSelf,
+    NotYours,
+    TradeNotFound,
+    OfferAlreadyExists,
+    NotVerificated
+)
 from src.service.dao.enums import TradeTypes, PostStatus, TradeStatus
 from src.service.dao.utils import (
     is_post_exists,
@@ -12,10 +19,12 @@ from src.service.dao.utils import (
     is_user_exists,
     user_is_post_owner,
     check_post_params,
-    check_trade_params
+    check_trade_params,
+    user_verificated
 )
 from typing import List
 from src.service.dao.users import User
+
 
 class Offers:
 
@@ -237,6 +246,9 @@ class Offers:
     async def send_offer(cls, trade_id: int, source_post_id: int, user_id: int):
 
         async def verify_params(session):
+            nonlocal trade_id, source_post_id, user_id
+
+            await user_verificated(session, user_id=user_id)
             await is_trade_exists(session, trade_id)
             await is_post_exists(session, source_post_id)
             await is_user_exists(session, user_id)
@@ -298,6 +310,7 @@ class Offers:
 
             nonlocal trade_id, source_post_id, user_id
 
+            await user_verificated(session, user_id=user_id)
             if not await user_is_post_owner(session, user_id, trade_id):
                 raise NotYours
             await is_trade_exists(session, trade_id)
@@ -353,6 +366,7 @@ class Offers:
         async def verify_params(session):
             nonlocal trade_id, source_post_id, user_id, processed
 
+            await user_verificated(session, user_id=user_id)
             await is_trade_exists(session, trade_id)
             await is_post_exists(session, source_post_id)
             await is_user_exists(session, user_id)
@@ -426,6 +440,7 @@ class Offers:
         async def verify_params(session):
             nonlocal trade_id, source_post_id, user_id
 
+            await user_verificated(session, user_id=user_id)
             if not await user_is_post_owner(session, user_id, trade_id):
                 raise NotYours
             await is_trade_exists(session, trade_id)

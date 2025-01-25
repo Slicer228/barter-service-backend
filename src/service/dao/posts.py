@@ -5,6 +5,7 @@ from src.service.dao.users import User
 from sqlalchemy import select, insert
 from src.service.db import async_session_maker
 from src.service.exceptions import ParentException
+from src.service.dao.utils import category_exists
 
 
 class Posts:
@@ -51,6 +52,7 @@ class Posts:
                         if post.categories:
                             i = 0
                             for cat in post.categories:
+                                await category_exists(session, cat)
                                 stmt = insert(PostCategories).values(
                                     post_id=post_id,
                                     category_id=cat,

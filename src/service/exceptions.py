@@ -70,4 +70,11 @@ class NotYours(ParentException):
     detail = 'Not Yours'
 
 
-collection = [cls for _, cls in inspect.getmembers(sys.modules[__name__], inspect.isclass) if cls.__module__ == __name__]
+class NotVerificated(ParentException):
+    status_code = status.HTTP_403_FORBIDDEN
+    detail = 'Not Verified'
+
+
+class CategoryNotFound(ParentException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = 'Category not found'

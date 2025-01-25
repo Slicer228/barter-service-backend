@@ -1,6 +1,13 @@
 from sqlalchemy import select
-from src.models.db import UserPosts, Trades, Users, UserTrades
-from src.service.exceptions import PostNotFound, ParentException, TradeNotFound, UserNotFound, UserAlreadyExists
+from src.models.db import UserPosts, Trades, Users, UserTrades, Categories
+from src.service.exceptions import (
+    PostNotFound,
+    ParentException,
+    TradeNotFound,
+    UserNotFound,
+    UserAlreadyExists,
+    NotVerificated, CategoryNotFound
+)
 from src.service.dao.enums import TradeTypes
 from src.service.db import async_session_maker
 
@@ -134,7 +141,7 @@ async def email_exists(session, email: str):
         ...
 
 
-async def is_user_verificated(session, user_id: int = None, email: str = None):
+async def user_verificated(session, user_id: int = None, email: str = None):
     if not user_id and not email:
         raise ParentException('no parameters')
     stmt = select(Users).where(
@@ -145,5 +152,16 @@ async def is_user_verificated(session, user_id: int = None, email: str = None):
     data = await session.execute(stmt)
     data = data.scalars().all()
     if data and len(data) == 1:
-        return True
-    return False
+        return
+    raise NotVerificated
+
+
+async def category_exists(session, category_id: int):
+    stmt = select(Categories).where(Categories.category_id == category_id)
+
+    data = await session.execute(stmt)
+    data = data.scalars().all()
+
+    if data and len(data) == 1:
+        return
+    raise CategoryNotFound
