@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"net/mail"
+	"net/smtp"
 	"os"
 	"time"
 )
@@ -41,6 +42,7 @@ func (EmailVerification) TableName() string {
 
 var db *gorm.DB
 var generator *randSequence.RandGenerator = randSequence.New()
+var mailClient smtp.Auth
 
 func initDbConnection() {
 	var link string = os.Getenv("DB_USERNAME") + ":" + os.Getenv("DB_PASSWORD") + "@tcp(" + os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT") + ")/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
@@ -80,6 +82,16 @@ func findUserVerificationByEmail(email string, userVerification *EmailVerificati
 	return
 }
 
+func sendMail(to string, body string) (err error) {
+	msg := []byte("To: " + to + "\r\n" +
+		"Subject: Подтверждение аккаунта\r\n" +
+		"\r\n" + os.Getenv("SERVER_ADDR") + "/verify_code?email=" + to + "&link=" + body + "\r\n")
+
+	err = smtp.SendMail(os.Getenv("SMTP_SERVER"), mailClient, os.Getenv("EMAIL_USERNAME"), []string{to}, msg)
+
+	return
+}
+
 func verifyEmail(email string) (err error) {
 	var user Users
 	err = findUserByEmail(email, &user)
@@ -98,7 +110,12 @@ func verifyEmail(email string) (err error) {
 			err = errors.New("verification link already requested")
 			return
 		} else {
+			err = sendMail(email, randomSeq)
+			if err != nil {
+				return
+			}
 			db.Model(&userVerification).Updates(map[string]interface{}{"secret_code": randomSeq})
+			// send here
 		}
 	}
 	return
@@ -154,10 +171,15 @@ func verifyByLinkRouter(c *gin.Context) {
 	}
 }
 
+func initEmailAuth() {
+	mailClient = smtp.PlainAuth("", os.Getenv("EMAIL_USERNAME"), os.Getenv("EMAIL_PASSWORD"), "smtp.mail.ru")
+}
+
 func main() {
 	initDotenv(".env")
-
 	initDbConnection()
+	initEmailAuth()
+
 	router := gin.Default()
 
 	router.POST("/verify", verifyEmailRouter)
