@@ -115,7 +115,6 @@ func verifyEmail(email string) (err error) {
 				return
 			}
 			db.Model(&userVerification).Updates(map[string]interface{}{"secret_code": randomSeq})
-			// send here
 		}
 	}
 	return

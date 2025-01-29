@@ -12,6 +12,3 @@ async def get_user(user_id: int = Depends(get_user_from_token)) -> SchemaUser | 
     return resp
 
 
-@router.get("/logout/",dependencies=[])
-async def logout(response: Response) -> None:
-    response.delete_cookie('access_token')

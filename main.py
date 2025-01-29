@@ -1,21 +1,17 @@
-from src.service.utils import addLog
-from fastapi import FastAPI, Request, Response
+from src.service.utils import add_log
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import ResponseValidationError, RequestValidationError
-from fastapi.encoders import jsonable_encoder
 from src.cors import origins
 import uvicorn
 from contextlib import asynccontextmanager
-from src.routers.posts.post import router as post_post_router
-from src.routers.posts.get import router as get_post_router
-from src.routers.users.get import router as get_users_router
-from src.routers.users.post import router as post_users_router
-from src.routers.offers.get import router as get_offers_router
-from src.routers.offers.post import router as post_offers_router
+from routers.posts.post import router as post_post_router
+from routers.posts.get import router as get_post_router
+from routers.users.get import router as get_users_router
+from routers.auth import router as auth_router
+from routers.offers.get import router as get_offers_router
+from routers.offers.post import router as post_offers_router
 from dotenv import load_dotenv
 from src.service.exception_handlers import constructors
-from typing import Any
 
 load_dotenv()
 
@@ -26,7 +22,7 @@ async def lifespan(app: FastAPI):
         app.include_router(post_post_router)
         app.include_router(get_post_router)
         app.include_router(get_users_router)
-        app.include_router(post_users_router)
+        app.include_router(auth_router)
         app.include_router(get_offers_router)
         app.include_router(post_offers_router)
 
@@ -34,7 +30,7 @@ async def lifespan(app: FastAPI):
 
         print('end')
     except Exception as e:
-        await addLog(e)
+        await add_log(e)
 
 app = FastAPI(lifespan=lifespan)
 

@@ -3,7 +3,7 @@ from sqlalchemy import select, insert
 from src.models.db import Users, EmailVerification
 from src.service.db import async_session_maker
 from src.service.dto.users import userview
-from src.service.auth import get_hashed_password, verify_password
+from authentication.auth import get_hashed_password, verify_password
 from src.service.exceptions import UserUnauthorized, UserNotFound
 import json
 from src.service.dao.utils import email_exists
@@ -36,15 +36,16 @@ class User:
                     raise e
 
     @staticmethod
-    async def auth(user: SchemaAuthUser) -> int:
+    @userview
+    async def get_user_from_email(email: str) -> Users:
         async with async_session_maker() as session:
-            stmt = select(Users).where(Users.email == user.email)
-            data = await session.execute(stmt)
-            data = data.scalars().first()
-            if verify_password(user.password, data.password):
-                return data.user_id
+            stmt = select(Users).where(Users.email == email)
+            result = await session.execute(stmt)
+            result = result.scalars().first()
+            if result:
+                return result
             else:
-                raise UserUnauthorized()
+                raise UserNotFound()
 
     @staticmethod
     @userview
