@@ -7,6 +7,7 @@ from authentication.auth import get_hashed_password, verify_password
 from src.service.exceptions import UserUnauthorized, UserNotFound, BadToken
 import json
 from src.service.dao.utils import email_exists
+from datetime import datetime
 
 
 class User:
@@ -32,11 +33,11 @@ class User:
                     await session.commit()
                     return result.lastrowid
                 except BaseException as e:
+                    print(e)
                     await session.rollback()
                     raise e
 
     @staticmethod
-    @userview
     async def get_user_from_email(email: str) -> Users:
         async with async_session_maker() as session:
             stmt = select(Users).where(Users.email == email)
@@ -48,20 +49,29 @@ class User:
                 raise UserNotFound()
 
     @staticmethod
-    async def verify_refresh_token(user_id: int, refresh_token: str):
+    async def check_rt_and_get_exp(user_id: int, refresh_token: str):
         async with async_session_maker() as session:
-            stmt = select(Users).where(Users.refresh_token == refresh_token, Users.user_id == user_id)
+            stmt = select(Users).where(Users.user_id == user_id)
 
             data = await session.execute(stmt)
             data = data.scalars().first()
 
+            rt = json.loads(data.refresh_token)
+
+            if rt.get('token') != refresh_token:
+                raise BadToken()
+
             if not data:
                 raise BadToken()
+
+            return datetime.fromisoformat(rt.get('exp'))
 
     @staticmethod
     async def set_refresh_token(user_id: int, refresh_token: dict):
         async with async_session_maker() as session:
-            stmt = update(Users).where(Users.user_id == user_id).values(refresh_token=refresh_token['token'])
+            stmt = update(Users).where(Users.user_id == user_id).values(
+                refresh_token=json.dumps(refresh_token, default=datetime.isoformat)
+            )
 
             await session.execute(stmt)
             await session.commit()

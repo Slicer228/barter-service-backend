@@ -29,7 +29,7 @@ async def get_user_from_token(token: str = Depends(get_token)):
             return int(payload['sub'])
         else:
             raise UserUnauthorized()
-    except JWTError:
+    except JWTError as e:
         raise UserUnauthorized()
 
 
@@ -38,19 +38,21 @@ async def get_user_id_from_token(token: str):
         payload = jwt.decode(
             token,
             settings.secret_key,
-            settings.encode_algorithm
+            settings.encode_algorithm,
+            {'verify_exp': False}
         )
         if payload['sub']:
             return int(payload['sub'])
         else:
             raise BadToken()
-    except JWTError:
+    except JWTError as e:
+        print(e)
         raise BadToken()
 
 
 def create_access_token(identity) -> str:
     to_encode = identity.copy()
-    expire = datetime.now(UTC) + timedelta(seconds=5)
+    expire = datetime.now(UTC) + timedelta(minutes=20)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.encode_algorithm)
     return encoded_jwt
@@ -60,6 +62,6 @@ def get_hashed_password(password):
     return password_context.hash(password)
 
 
-def verify_password(plain_password, hashed_password):
+async def verify_password(plain_password, hashed_password):
     return password_context.verify(plain_password, hashed_password)
 

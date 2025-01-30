@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from src.service.utils import get_user_from_token
+from authentication.auth import get_user_from_token
 from src.service.dao.offers import Offers
 
 router = APIRouter(prefix="/offers")

@@ -19,7 +19,7 @@ class Users(Base):
     green_scores: Mapped[int] = mapped_column(Integer, default=0)
     green_points: Mapped[int] = mapped_column(Integer, default=0)
     verificated: Mapped[bool] = mapped_column(Boolean, default=False)
-    refresh_token: Mapped[str] = mapped_column(String(12), default=None)
+    refresh_token: Mapped[str] = mapped_column(String(256), default=None)
 
 
 class UserPosts(Base):
