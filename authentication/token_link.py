@@ -1,7 +1,7 @@
 from datetime import datetime, UTC, timedelta
 from authentication.auth import password_context
 from typing import Dict
-from src.service.exceptions import UserUnauthorized
+from src.service.exceptions import UserUnauthorized, BadToken
 
 
 def generate_refresh_token(access_token: str) -> Dict[str, str]:
@@ -16,11 +16,13 @@ def generate_refresh_token(access_token: str) -> Dict[str, str]:
     return rt
 
 
-def check_rt_expired(exp: float):
-    if datetime.now(UTC) > datetime.fromtimestamp(float(exp)):
-        raise UserUnauthorized
+def check_rt_expired(refresh_token: dict):
+    if datetime.now(UTC) > datetime.fromtimestamp(float(refresh_token.get('exp'))):
+        raise BadToken()
+    return refresh_token
 
 
 def verify_refresh_token(token: str, rt: str):
     sign = token[::-1][:12]
-    return password_context.verify(sign, rt)
+    if not password_context.verify(sign, rt):
+        raise BadToken()

@@ -1,10 +1,10 @@
 from src.schemas.request import SchemaAddUser, SchemaAuthUser
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 from src.models.db import Users, EmailVerification
 from src.service.db import async_session_maker
 from src.service.dto.users import userview
 from authentication.auth import get_hashed_password, verify_password
-from src.service.exceptions import UserUnauthorized, UserNotFound
+from src.service.exceptions import UserUnauthorized, UserNotFound, BadToken
 import json
 from src.service.dao.utils import email_exists
 
@@ -46,6 +46,25 @@ class User:
                 return result
             else:
                 raise UserNotFound()
+
+    @staticmethod
+    async def verify_refresh_token(user_id: int, refresh_token: str):
+        async with async_session_maker() as session:
+            stmt = select(Users).where(Users.refresh_token == refresh_token, Users.user_id == user_id)
+
+            data = await session.execute(stmt)
+            data = data.scalars().first()
+
+            if not data:
+                raise BadToken()
+
+    @staticmethod
+    async def set_refresh_token(user_id: int, refresh_token: dict):
+        async with async_session_maker() as session:
+            stmt = update(Users).where(Users.user_id == user_id).values(refresh_token=refresh_token['token'])
+
+            await session.execute(stmt)
+            await session.commit()
 
     @staticmethod
     @userview

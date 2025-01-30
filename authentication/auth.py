@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from config import settings
 from fastapi import Depends, Request
 from fastapi.responses import RedirectResponse
-from src.service.exceptions import UserUnauthorized
+from src.service.exceptions import UserUnauthorized, BadToken
 
 
 password_context = CryptContext(schemes=[settings.secondary_encode_algorithm], deprecated="auto")
@@ -13,15 +13,13 @@ password_context = CryptContext(schemes=[settings.secondary_encode_algorithm], d
 async def get_token(request: Request):
     token = request.cookies.get('access_token')
     if not token:
-        return ''
+        raise UserUnauthorized()
     else:
         return token
 
 
 async def get_user_from_token(token: str = Depends(get_token)):
     try:
-        if not token:
-            return RedirectResponse('ok.ru')  # тут переадресация на login
         payload = jwt.decode(
             token,
             settings.secret_key,
@@ -30,9 +28,24 @@ async def get_user_from_token(token: str = Depends(get_token)):
         if payload['sub'] and payload['exp']:
             return int(payload['sub'])
         else:
-            return RedirectResponse('vk.ru')  # тут переадресация на refresh
+            raise UserUnauthorized()
     except JWTError:
-        return RedirectResponse('ok.ru')  # тут переадресация на login
+        raise UserUnauthorized()
+
+
+async def get_user_id_from_token(token: str):
+    try:
+        payload = jwt.decode(
+            token,
+            settings.secret_key,
+            settings.encode_algorithm
+        )
+        if payload['sub']:
+            return int(payload['sub'])
+        else:
+            raise BadToken()
+    except JWTError:
+        raise BadToken()
 
 
 def create_access_token(identity) -> str:

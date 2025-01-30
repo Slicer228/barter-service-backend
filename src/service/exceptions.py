@@ -15,6 +15,11 @@ class ParentException(HTTPException):
         return self.reason if self.reason else self.detail
 
 
+class BadToken(ParentException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Bad Token'
+
+
 class UserNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = 'User not found'
