@@ -82,3 +82,8 @@ class NotVerificated(ParentException):
 class CategoryNotFound(ParentException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = 'Category not found'
+
+
+class BadRequest(ParentException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Bad Request'

@@ -14,8 +14,10 @@ from dotenv import load_dotenv
 from src.service.exception_handlers import constructors
 
 load_dotenv()
-
-
+from sqlalchemy import select
+from src.models.db import UserTrades, UserPosts, Categories, PostCategories
+from src.service.db import async_session_maker
+import asyncio
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:

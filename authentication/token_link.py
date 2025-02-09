@@ -25,7 +25,7 @@ def check_rt_expired(exp):
         raise BadToken()
 
 
-def verify_refresh_token(token: str, rt: str):
-    sign = token[::-1][:12]
+def verify_refresh_token(acces_token: str, rt: str):
+    sign = acces_token[::-1][:12]
     if not refresh_token_context.verify(sign, rt):
         raise BadToken()

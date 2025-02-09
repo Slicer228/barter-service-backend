@@ -26,7 +26,7 @@ def postview(func):
                             post_name=post[0].post_name,
                             post_description=post[0].post_description,
                             post_type=post[0].post_type,
-                            status=post[0].status,
+                            status=post[0].trade_status,
                             photos=photos,
                             categories=categories
                         ))

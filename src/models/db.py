@@ -30,7 +30,7 @@ class UserPosts(Base):
     post_description: Mapped[str] = mapped_column(String(1024), default='Пользователь не оставил описания')
     post_type: Mapped[str] = mapped_column(String(5), nullable=False)
     trade_id: Mapped[int] = mapped_column(Integer, ForeignKey('trades.trade_id'), nullable=False)
-    status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
+    post_status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
 
 
 class Categories(Base):
@@ -69,7 +69,7 @@ class UserTrades(Base):
     post_id: Mapped[int] = mapped_column(Integer, ForeignKey('user_posts.post_id'), nullable=False)
     trade_id: Mapped[int] = mapped_column(Integer, ForeignKey('trades.trade_id'), nullable=False)
     utType: Mapped[str] = mapped_column(String(6), nullable=False)
-    status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
+    trade_status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
 
 
 class PostPhotos(Base):
