@@ -57,7 +57,7 @@ class PostCategories(Base):
 class Trades(Base):
     __tablename__ = 'trades'
 
-    trade_id: Mapped[int] = mapped_column(Integer, primary_key=True,autoincrement=True, unique=True)
+    trade_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, unique=True)
     date: Mapped[date] = mapped_column(TIMESTAMP, nullable=False)
 
 

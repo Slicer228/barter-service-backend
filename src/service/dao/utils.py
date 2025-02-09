@@ -94,22 +94,6 @@ async def user_is_post_owner(session, user_id: int, trade_id: int):
         return False
 
 
-async def get_trade_owner_email(trade_id: int):
-    async with async_session_maker() as session:
-        stmt = select(UserTrades.user_id).where(
-            UserTrades.trade_id == trade_id,
-            UserTrades.utType == TradeTypes.POST.value
-        )
-        data = await session.execute(stmt)
-        data = data.scalars().first()
-
-        stmt = select(Users.email).where(Users.user_id == data)
-        data = await session.execute(stmt)
-        data = data.scalars().first()
-
-        return data
-
-
 async def check_trade_params(session, *params):
     stmt = select(UserTrades).where(*params)
     data = await session.execute(stmt)
