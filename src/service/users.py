@@ -1,10 +1,10 @@
-from src.schemas.request import SchemaAddUser, SchemaAuthUser
+from src.schemas.request import SchemaAddUser
 from sqlalchemy import select, insert, update
 from src.models.db import Users, EmailVerification
 from src.service.db import async_session_maker
 from src.service.dto.users import userview
-from authentication.auth import get_hashed_password, verify_password
-from src.service.exceptions import UserUnauthorized, UserNotFound, BadToken
+from src.authentication.auth import get_hashed_password
+from src.exc.exceptions import UserNotFound, BadToken
 import json
 from src.service.dao.utils import email_exists
 from datetime import datetime

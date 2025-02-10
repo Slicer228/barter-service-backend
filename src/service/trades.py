@@ -1,31 +1,20 @@
 from src.service.dto.offers import offer_view
 from src.service.db import async_session_maker
 from src.models.db import UserTrades, UserPosts
-from src.service.dao.posts import Posts
+from src.service.posts import Posts
 from sqlalchemy import select, insert, update
 from src.schemas.response import SchemaOffer
 from src.schemas.request import SchemaSendOffer
-from src.service.exceptions import (
-    OfferNotFound,
-    CannotInteractWithSelf,
-    NotYours,
-    TradeNotFound,
-    OfferAlreadyExists,
-    NotVerificated
+from src.exc.exceptions import (
+    OfferNotFound
 )
 from src.service.dao.enums import TradeTypes, PostStatus, TradeStatus, OfferScenarios
 from src.service.dao.utils import (
-    is_post_exists,
-    is_trade_exists,
-    is_user_exists,
-    user_is_post_owner,
-    check_post_params,
-    check_trade_params,
-    user_verificated
+    user_is_post_owner
 )
 from typing import List
-from src.service.dao.users import User
-from src.service.dao.offers.scenario_validation import Validator
+from src.service.users import User
+from src.service.trades import Validator
 
 
 class GetOffers:
@@ -300,7 +289,6 @@ class OfferSignals:
                 offer_data.source_post_id,
                 TradeStatus.ACTIVE
             )
-
 
         async with async_session_maker() as session:
             async with session.begin():

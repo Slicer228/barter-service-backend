@@ -1,8 +1,4 @@
 import logging
-from fastapi import Request, Depends
-from jose import JWTError, jwt
-from config import settings
-from src.service.exceptions import UserUnauthorized
 
 logging.basicConfig(
     level=logging.ERROR,

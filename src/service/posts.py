@@ -1,10 +1,10 @@
 from src.service.dto.posts import postview
 from src.schemas.request import SchemaAddPost
 from src.models.db import UserTrades, UserPosts, PostPhotos, PostCategories, Categories, Trades
-from src.service.dao.users import User
+from src.service.users import User
 from sqlalchemy import select, insert
 from src.service.db import async_session_maker
-from src.service.exceptions import ParentException
+from src.exc.exceptions import ParentException
 from src.service.dao.utils import category_exists
 
 
@@ -95,28 +95,30 @@ class Posts:
 
     @staticmethod
     @postview
-    async def get(post_id: int | list[int]):
-        async def get_one(post_id: int) -> tuple:
-            stmtP = select(UserPosts).where(UserPosts.post_id == post_id)
-            stmtPP = select(PostPhotos).where(PostPhotos.post_id == post_id)
-            stmtC = (select(Categories).join(PostCategories.category_names)
-                     .where(PostCategories.post_id == post_id)
-                     .order_by(PostCategories.category_type))
-            async with async_session_maker() as session:
-                post = await session.execute(stmtP)
-                post = post.scalars().first()
-                photos = await session.execute(stmtPP)
-                photos = photos.scalars().all()
-                categories = await session.execute(stmtC)
-                categories = categories.scalars().all()
-                stmt = select(UserTrades.user_id).where(UserTrades.post_id == post_id, UserTrades.utType == 'post')
-                usr_id = await session.execute(stmt)
-                usr_id = usr_id.scalars().first()
-                try:
-                    user = await User.get_user(usr_id)
-                    return post, photos, categories, user
-                except BaseException:
-                    raise ParentException('Error in getting user')
+    async def _get_post_by_id(session, post_id: int):
+        stmtP = select(UserPosts).where(UserPosts.post_id == post_id)
+        stmtPP = select(PostPhotos).where(PostPhotos.post_id == post_id)
+        stmtC = (select(Categories).join(PostCategories.category_names)
+                 .where(PostCategories.post_id == post_id)
+                 .order_by(PostCategories.category_type))
+        post = await session.execute(stmtP)
+        post = post.scalars().first()
+        photos = await session.execute(stmtPP)
+        photos = photos.scalars().all()
+        categories = await session.execute(stmtC)
+        categories = categories.scalars().all()
+        stmt = select(UserTrades.user_id).where(UserTrades.post_id == post_id, UserTrades.utType == 'post')
+        usr_id = await session.execute(stmt)
+        usr_id = usr_id.scalars().first()
+        try:
+            user = await User.get_user(usr_id)
+            return post, photos, categories, user
+        except BaseException:
+            raise ParentException('Error in getting user')
+
+    @staticmethod
+    @postview
+    async def get(post_id: int):
         if post_id == 0:
             return []
         if isinstance(post_id, list):

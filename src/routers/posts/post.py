@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from src.service.dao.posts import Posts
+from src.service.posts import Posts
 from src.schemas.request import SchemaAddPost
-from authentication.auth import get_user_from_token
+from src.authentication.auth import get_user_from_token
 
 router = APIRouter(prefix="/posts")
 

@@ -4,20 +4,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.cors import origins
 import uvicorn
 from contextlib import asynccontextmanager
-from routers.posts.post import router as post_post_router
-from routers.posts.get import router as get_post_router
-from routers.users.get import router as get_users_router
-from routers.auth import router as auth_router
-from routers.offers.get import router as get_offers_router
-from routers.offers.post import router as post_offers_router
+from src.routers.posts.post import router as post_post_router
+from src.routers.posts.get import router as get_post_router
+from src.routers.users.get import router as get_users_router
+from src.routers.auth import router as auth_router
+from src.routers.trades.get import router as get_trades_router
+from src.routers.trades.post import router as post_trades_router
 from dotenv import load_dotenv
-from src.service.exception_handlers import constructors
+from src.exc.exception_handlers import constructors
 
 load_dotenv()
-from sqlalchemy import select
-from src.models.db import UserTrades, UserPosts, Categories, PostCategories
-from src.service.db import async_session_maker
-import asyncio
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
@@ -25,8 +23,8 @@ async def lifespan(app: FastAPI):
         app.include_router(get_post_router)
         app.include_router(get_users_router)
         app.include_router(auth_router)
-        app.include_router(get_offers_router)
-        app.include_router(post_offers_router)
+        app.include_router(get_trades_router)
+        app.include_router(post_trades_router)
 
         yield
 

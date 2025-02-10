@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from src.models.db import UserPosts, Trades, Users, UserTrades, Categories
-from src.service.exceptions import (
+from src.exc.exceptions import (
     PostNotFound,
     ParentException,
     TradeNotFound,
@@ -9,7 +9,6 @@ from src.service.exceptions import (
     NotVerificated, CategoryNotFound
 )
 from src.service.dao.enums import TradeTypes
-from src.service.db import async_session_maker
 
 
 class _InternalFuncs:

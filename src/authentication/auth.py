@@ -3,8 +3,7 @@ from datetime import datetime, timedelta, UTC
 from passlib.context import CryptContext
 from config import settings
 from fastapi import Depends, Request
-from fastapi.responses import RedirectResponse
-from src.service.exceptions import UserUnauthorized, BadToken
+from src.exc.exceptions import UserUnauthorized, BadToken
 
 
 password_context = CryptContext(schemes=[settings.secondary_encode_algorithm], deprecated="auto")

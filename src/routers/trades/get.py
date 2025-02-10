@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
-from authentication.auth import get_user_from_token
-from src.service.dao.offers.offers import GetOffers
+from src.authentication.auth import get_user_from_token
+from src.service.trades import GetOffers
 
-router = APIRouter(prefix="/offers")
+router = APIRouter(prefix="/trades")
 
 
 @router.get("/incoming")

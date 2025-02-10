@@ -1,6 +1,6 @@
 from src.schemas.response import SchemaUser
 from src.models.db import Users
-from src.service.exceptions import ParentException
+from src.exc.exceptions import ParentException
 
 
 def userview(func):

@@ -2,55 +2,52 @@ from src.schemas.request import SchemaSendOffer
 from sqlalchemy import select
 from src.models.db import UserTrades, UserPosts
 from src.service.dao.enums import TradeTypes, PostTypes, PostStatus, TradeStatus, OfferScenarios
-from src.service.exceptions import ParentException, TradeNotFound, BadRequest, NotYours
+from src.exc.exceptions import ParentException, TradeNotFound, BadRequest, NotYours
 
 
 class DataFetcher:
+
+    _stmt_prepared = select(UserTrades, UserPosts.post_id, UserPosts.post_status).join(UserTrades.related_posts)
+
     @staticmethod
-    async def get_owners_trade_by_trade_id(session, trade_id: int):
-        stmt = select(UserTrades, UserPosts.post_id, UserPosts.post_status).where(
+    async def _get_one_trade_from_data(data):
+        if len(data) > 1:
+            raise ParentException("Error in database")
+        if len(data) == 0:
+            raise TradeNotFound()
+        return data[0]
+
+    @classmethod
+    async def get_owners_trade_by_trade_id(cls, session, trade_id: int):
+        stmt = cls._stmt_prepared.where(
             UserTrades.trade_id == trade_id,
             UserTrades.utType == TradeTypes.POST.value
-        ).join(UserPosts, UserPosts.trade_id == UserTrades.trade_id)
-        data = await session.execute(stmt)
-        data = data.all()
+        )
+        data = (await session.execute(stmt)).all()
 
-        if len(data) > 1:
-            raise ParentException("Error in database")
-        if len(data) == 0:
-            raise TradeNotFound()
-        return data[0]
+        return await cls._get_one_trade_from_data(data)
 
-    @staticmethod
-    async def get_owners_trade_by_post_id(session, post_id: int):
-        stmt = select(UserTrades, UserPosts.post_id, UserPosts.post_status).where(
+    @classmethod
+    async def get_owners_trade_by_post_id(cls, session, post_id: int):
+        stmt = cls._stmt_prepared.where(
             UserTrades.post_id == post_id,
             UserTrades.utType == TradeTypes.POST.value
-        ).join(UserPosts, UserPosts.trade_id == UserTrades.trade_id)
-        data = await session.execute(stmt)
-        data = data.all()
+        )
+        data = (await session.execute(stmt)).all()
 
-        if len(data) > 1:
-            raise ParentException("Error in database")
-        if len(data) == 0:
-            raise TradeNotFound()
-        return data[0]
+        return await cls._get_one_trade_from_data(data)
 
-    @staticmethod
-    async def get_offering_trade(session, trade_id: int, source_post_id: int):
-        stmt = select(UserTrades, UserPosts.post_id, UserPosts.post_status).where(
+    @classmethod
+    async def get_offering_trade(cls, session, trade_id: int, source_post_id: int):
+        stmt = cls._stmt_prepared.where(
             UserTrades.trade_id == trade_id,
             UserTrades.post_id == source_post_id,
             UserTrades.utType == TradeTypes.OFFER.value
-        ).join(UserPosts, UserPosts.trade_id == UserTrades.trade_id)
-        data = await session.execute(stmt)
-        data = data.all()
+        )
 
-        if len(data) > 1:
-            raise ParentException("Error in database")
-        if len(data) == 0:
-            raise TradeNotFound()
-        return data[0]
+        data = (await session.execute(stmt)).all()
+
+        return await cls._get_one_trade_from_data(data)
 
 
 class Validator:

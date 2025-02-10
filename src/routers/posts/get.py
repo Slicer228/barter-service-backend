@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from src.schemas.response import SchemaPost
-from src.service.dao.posts import Posts
+from src.service.posts import Posts
 
 
 router = APIRouter(prefix="/posts")

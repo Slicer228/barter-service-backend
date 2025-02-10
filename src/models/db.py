@@ -71,6 +71,10 @@ class UserTrades(Base):
     utType: Mapped[str] = mapped_column(String(6), nullable=False)
     trade_status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
 
+    related_posts = relationship(
+        'UserPosts',
+        primaryjoin="UserPosts.trade_id == UserTrades.trade_id"
+    )
 
 class PostPhotos(Base):
     __tablename__ = 'post_photos'

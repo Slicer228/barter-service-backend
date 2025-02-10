@@ -1,7 +1,6 @@
 from datetime import datetime, UTC, timedelta
-from authentication.auth import password_context
 from typing import Dict
-from src.service.exceptions import UserUnauthorized, BadToken
+from src.exc.exceptions import BadToken
 from passlib.context import CryptContext
 from config import settings
 

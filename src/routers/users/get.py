@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends
 from src.schemas.response import SchemaUser
-from src.service.dao.users import User
-from authentication.auth import get_user_from_token
+from src.service.users import User
+from src.authentication.auth import get_user_from_token
 
 router = APIRouter(prefix="/users")
 

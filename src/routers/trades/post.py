@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
-from authentication.auth import get_user_from_token
+from src.authentication.auth import get_user_from_token
 from src.schemas.request import SchemaSendOffer
-from src.service.dao.offers.offers import OfferSignals
+from src.service.trades import OfferSignals
 
 
-router = APIRouter(prefix="/offers")
+router = APIRouter(prefix="/trades")
 
 
 @router.post("/send")

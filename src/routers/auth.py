@@ -1,10 +1,8 @@
 from fastapi import Depends, APIRouter, Response, Request
 from src.schemas.request import SchemaAddUser, SchemaAuthUser
-from authentication.auth import create_access_token, get_user_from_token, get_user_id_from_token, verify_password
-from src.service.dao.users import User
-from authentication.token_link import generate_refresh_token, check_rt_expired, verify_refresh_token
-from fastapi.responses import RedirectResponse, JSONResponse
-
+from src.authentication.auth import create_access_token, get_user_from_token, get_user_id_from_token, verify_password
+from src.service.users import User
+from src.authentication.token_link import generate_refresh_token, check_rt_expired, verify_refresh_token
 
 router = APIRouter(prefix="/auth")
 
