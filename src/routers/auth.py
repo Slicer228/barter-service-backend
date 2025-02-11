@@ -1,5 +1,5 @@
 from fastapi import Depends, APIRouter, Response, Request
-from src.schemas.request import SchemaAddUser, SchemaAuthUser
+from src.schemas.request import RegisterUserSchema, AuthenticateUserSchema
 from src.authentication.auth import create_access_token, get_user_from_token, get_user_id_from_token, verify_password
 from src.service.users import User
 from src.authentication.token_link import generate_refresh_token, check_rt_expired, verify_refresh_token
@@ -13,7 +13,7 @@ async def logout(response: Response, user_id=Depends(get_user_from_token)) -> No
 
 
 @router.post("/authorization/")
-async def authorize_user(response: Response, user: SchemaAuthUser):
+async def authorize_user(response: Response, user: AuthenticateUserSchema):
     user_obj = await User.get_user_from_email(user.email)
     await verify_password(user.password, user_obj.password)
     access_token = create_access_token({'sub': str(user_obj.user_id)})
@@ -38,6 +38,6 @@ async def refresh_tokens(request: Request, response: Response, refresh_token: st
 
 
 @router.post("/registration/")
-async def create_user(response: Response, user: SchemaAddUser):
+async def create_user(response: Response, user: RegisterUserSchema):
     await User.set(user)
-    return await authorize_user(response, SchemaAuthUser(email=user.email, password=user.password))
+    return await authorize_user(response, AuthenticateUserSchema(email=user.email, password=user.password))

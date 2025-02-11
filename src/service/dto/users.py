@@ -1,4 +1,4 @@
-from src.schemas.response import SchemaUser
+from src.schemas.response import UserSchema
 from src.models.db import Users
 from src.exc.exceptions import ParentException
 
@@ -12,7 +12,7 @@ def userview(func):
                 vlst = []
                 for usr in original:
                     if isinstance(usr, Users):
-                        vlst.append(SchemaUser(
+                        vlst.append(UserSchema(
                             user_id=usr.user_id,
                             username=usr.username,
                             avatar=usr.avatar,

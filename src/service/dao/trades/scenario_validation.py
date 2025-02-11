@@ -1,4 +1,4 @@
-from src.schemas.request import SchemaSendOffer
+from src.schemas.request import RequestTradeDataSchema
 from sqlalchemy import select
 from src.models.db import UserTrades, UserPosts
 from src.service.dao.enums import TradeTypes, PostTypes, PostStatus, TradeStatus, OfferScenarios
@@ -7,7 +7,12 @@ from src.exc.exceptions import ParentException, TradeNotFound, BadRequest, NotYo
 
 class DataFetcher:
 
-    _stmt_prepared = select(UserTrades, UserPosts.post_id, UserPosts.post_status).join(UserTrades.related_posts)
+    _stmt_prepared = select(
+        UserTrades,
+        UserPosts.post_id,
+        UserPosts.post_status).join(UserPosts,
+                                    UserPosts.trade_id == UserTrades.trade_id
+                                    )
 
     @staticmethod
     async def _get_one_trade_from_data(data):
@@ -53,7 +58,7 @@ class DataFetcher:
 class Validator:
 
     @staticmethod
-    async def _send_offer_scenario(session, offer_data: SchemaSendOffer, user_id: int):
+    async def _send_offer_scenario(session, offer_data: RequestTradeDataSchema, user_id: int):
         dest_trade = await DataFetcher.get_owners_trade_by_trade_id(session, offer_data.trade_id)
 
         if dest_trade.post_status != PostStatus.ACTIVE.value or dest_trade.trade_status != TradeStatus.ACTIVE.value:
@@ -72,7 +77,7 @@ class Validator:
             raise NotYours()
 
     @staticmethod
-    async def _accept_offer_scenario(session, offer_data: SchemaSendOffer, user_id: int):
+    async def _accept_offer_scenario(session, offer_data: RequestTradeDataSchema, user_id: int):
         dest_trade = await DataFetcher.get_owners_trade_by_trade_id(session, offer_data.trade_id)
 
         if dest_trade.post_type == PostTypes.GIFT.value:
@@ -91,7 +96,7 @@ class Validator:
             raise BadRequest("Inactive trade")
 
     @staticmethod
-    async def _reject_offer_scenario(session, offer_data: SchemaSendOffer, user_id: int):
+    async def _reject_offer_scenario(session, offer_data: RequestTradeDataSchema, user_id: int):
         dest_trade = await DataFetcher.get_owners_trade_by_trade_id(session, offer_data.trade_id)
         src_trade = await DataFetcher.get_offering_trade(session, offer_data.source_post_id, offer_data.trade_id)
 
@@ -111,7 +116,7 @@ class Validator:
             raise BadRequest()
 
     @staticmethod
-    async def _end_offer_scenario(session, offer_data: SchemaSendOffer, user_id: int):
+    async def _end_offer_scenario(session, offer_data: RequestTradeDataSchema, user_id: int):
         dest_trade = await DataFetcher.get_owners_trade_by_trade_id(session, offer_data.trade_id)
 
         if dest_trade.post_type == PostTypes.GIFT.value:
@@ -130,7 +135,7 @@ class Validator:
             raise BadRequest("Inactive trade")
 
     @classmethod
-    async def validate_offer_scenario(cls, session, offer_data: SchemaSendOffer, user_id: int, scenario: OfferScenarios):
+    async def validate_offer_scenario(cls, session, offer_data: RequestTradeDataSchema, user_id: int, scenario: OfferScenarios):
         match scenario.value:
             case OfferScenarios.SEND.value: await cls._send_offer_scenario(session, offer_data, user_id)
             case OfferScenarios.END.value: await cls._end_offer_scenario(session, offer_data, user_id)

@@ -1,11 +1,12 @@
 from src.service.dto.posts import postview
-from src.schemas.request import SchemaAddPost
+from src.schemas.request import AddPostSchema
 from src.models.db import UserTrades, UserPosts, PostPhotos, PostCategories, Categories, Trades
 from src.service.users import User
 from sqlalchemy import select, insert
 from src.service.db import async_session_maker
 from src.exc.exceptions import ParentException
 from src.service.dao.utils import category_exists
+from src.service.dao.filter import PostFilter
 
 
 class Posts:
@@ -22,9 +23,9 @@ class Posts:
 
     @staticmethod
     @postview
-    async def add(post: SchemaAddPost | list[SchemaAddPost], user_id: int) -> int | list[int]:
+    async def add(post: AddPostSchema | list[AddPostSchema], user_id: int) -> int | list[int]:
 
-        async def add_one(post: SchemaAddPost) -> int:
+        async def add_one(post: AddPostSchema) -> int:
             nonlocal user_id
             async with async_session_maker() as session:
                 async with session.begin():
@@ -116,16 +117,20 @@ class Posts:
         except BaseException:
             raise ParentException('Error in getting user')
 
-    @staticmethod
-    @postview
-    async def get(post_id: int):
+    @classmethod
+    async def get_by_id(cls, post_id: int):
         if post_id == 0:
             return []
-        if isinstance(post_id, list):
-            psts = []
-            for pst in post_id:
-                psts.append(await get_one(pst))
-            return psts
         else:
-            pst = await get_one(post_id)
-            return [pst] if pst else []
+            async with async_session_maker() as session:
+                pst = await cls._get_post_by_id(session, post_id)
+                return [pst] if pst else []
+
+    @classmethod
+    @postview
+    async def get(cls, filters):
+        async with async_session_maker() as session:
+            stmt = select(UserPosts.post_id)
+            stmt = await PostFilter.affect_filters_to_stmt(stmt, filters)
+            data = (await session.execute(stmt)).all()
+            return [await cls._get_post_by_id(session, post.post_id) for post in data]

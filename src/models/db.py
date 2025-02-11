@@ -32,6 +32,11 @@ class UserPosts(Base):
     trade_id: Mapped[int] = mapped_column(Integer, ForeignKey('trades.trade_id'), nullable=False)
     post_status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
 
+    related_categories = relationship(
+        'PostCategories',
+        primaryjoin='UserPosts.post_id == PostCategories.post_id'
+    )
+
 
 class Categories(Base):
     __tablename__ = 'categories'
@@ -71,10 +76,6 @@ class UserTrades(Base):
     utType: Mapped[str] = mapped_column(String(6), nullable=False)
     trade_status: Mapped[str] = mapped_column(String(10), nullable=False, default='active')
 
-    related_posts = relationship(
-        'UserPosts',
-        primaryjoin="UserPosts.trade_id == UserTrades.trade_id"
-    )
 
 class PostPhotos(Base):
     __tablename__ = 'post_photos'

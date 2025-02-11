@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class SchemaUser(BaseModel):
+class UserSchema(BaseModel):
     user_id: int
     username: str
     avatar: str | None
@@ -9,23 +9,23 @@ class SchemaUser(BaseModel):
     green_points: int
 
 
-class SchemaPostPhoto(BaseModel):
+class PostPhotoSchema(BaseModel):
     post_photo_name: str
     post_photo: str
 
 
-class SchemaPost(BaseModel):
-    owner: SchemaUser | None
+class PostSchema(BaseModel):
+    owner: UserSchema | None
     post_id: int
     trade_id: int
     post_name: str
     post_description: str | None
     post_type: str
     status: str
-    photos: list[SchemaPostPhoto] | list
-    categories: list[int] | list
+    photos: list[PostPhotoSchema] | list
+    categories: list[int]
 
 
-class SchemaOffer(BaseModel):
-    post: SchemaPost
-    source_post: SchemaPost | SchemaUser
+class TradeSchema(BaseModel):
+    post: PostSchema
+    source_post: PostSchema | UserSchema

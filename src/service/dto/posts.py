@@ -1,4 +1,4 @@
-from src.schemas.response import SchemaPost, SchemaPostPhoto, SchemaUser
+from src.schemas.response import PostSchema, PostPhotoSchema, UserSchema
 
 
 def postview(func):
@@ -10,8 +10,8 @@ def postview(func):
                 psts_final = []
                 for post in original:
                     if isinstance(post, tuple):
-                        photos = [SchemaPostPhoto(post_photo_name=i.post_photo_name, post_photo=i.post_photo) for i in post[1]]
-                        owner = SchemaUser(user_id = post[3].user_id,
+                        photos = [PostPhotoSchema(post_photo_name=i.post_photo_name, post_photo=i.post_photo) for i in post[1]]
+                        owner = UserSchema(user_id = post[3].user_id,
                                            avatar = post[3].avatar,
                                            username = post[3].username,
                                            green_scores=post[3].green_scores,
@@ -19,14 +19,14 @@ def postview(func):
                                            )
                         categories = [i.category_id for i in post[2]]
 
-                        psts_final.append(SchemaPost(
+                        psts_final.append(PostSchema(
                             owner=owner,
                             post_id=post[0].post_id,
                             trade_id=post[0].trade_id,
                             post_name=post[0].post_name,
                             post_description=post[0].post_description,
                             post_type=post[0].post_type,
-                            status=post[0].trade_status,
+                            status=post[0].post_status,
                             photos=photos,
                             categories=categories
                         ))

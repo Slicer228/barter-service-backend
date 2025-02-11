@@ -3,8 +3,8 @@ from src.service.db import async_session_maker
 from src.models.db import UserTrades, UserPosts
 from src.service.posts import Posts
 from sqlalchemy import select, insert, update
-from src.schemas.response import SchemaOffer
-from src.schemas.request import SchemaSendOffer
+from src.schemas.response import TradeSchema
+from src.schemas.request import RequestTradeDataSchema
 from src.exc.exceptions import (
     OfferNotFound
 )
@@ -14,7 +14,7 @@ from src.service.dao.utils import (
 )
 from typing import List
 from src.service.users import User
-from src.service.trades import Validator
+from src.service.dao.trades.scenario_validation import Validator
 
 
 class GetOffers:
@@ -54,7 +54,7 @@ class GetOffers:
         for trade in trades:
             if not await user_is_post_owner(session, trade.user_id, trade.trade_id):
                 offers.append(
-                    SchemaOffer(
+                    TradeSchema(
                         post=await cls.find_post_by_trade(session, trade.trade_id),
                         source_post=(
                             await Posts.get(trade.post_id) if trade.post_id else await User.get_user(trade.user_id)
@@ -235,7 +235,7 @@ class OfferSignals:
 
     @classmethod
     @offer_view
-    async def send_offer(cls, offer_data: SchemaSendOffer, user_id: int):
+    async def send_offer(cls, offer_data: RequestTradeDataSchema, user_id: int):
 
         async with async_session_maker() as session:
             async with session.begin():
@@ -256,7 +256,7 @@ class OfferSignals:
 
     @classmethod
     @offer_view
-    async def accept_offer(cls, offer_data: SchemaSendOffer, user_id: int):
+    async def accept_offer(cls, offer_data: RequestTradeDataSchema, user_id: int):
 
         async with async_session_maker() as session:
 
@@ -276,7 +276,7 @@ class OfferSignals:
 
     @classmethod
     @offer_view
-    async def reject_offer(cls, offer_data: SchemaSendOffer, user_id: int, processed: bool):
+    async def reject_offer(cls, offer_data: RequestTradeDataSchema, user_id: int, processed: bool):
 
         async def roll_back_processed_offer(session):
 
@@ -312,7 +312,7 @@ class OfferSignals:
 
     @classmethod
     @offer_view
-    async def end_offer(cls, offer_data: SchemaSendOffer, user_id: int):
+    async def end_offer(cls, offer_data: RequestTradeDataSchema, user_id: int):
 
         async with async_session_maker() as session:
             async with session.begin():

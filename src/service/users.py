@@ -1,4 +1,4 @@
-from src.schemas.request import SchemaAddUser
+from src.schemas.request import RegisterUserSchema
 from sqlalchemy import select, insert, update
 from src.models.db import Users, EmailVerification
 from src.service.db import async_session_maker
@@ -13,7 +13,7 @@ from datetime import datetime
 class User:
 
     @classmethod
-    async def set(cls, usrobj: SchemaAddUser) -> int:
+    async def set(cls, usrobj: RegisterUserSchema) -> int:
         password = get_hashed_password(usrobj.password)
 
         async with async_session_maker() as session:
