@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from src.schemas.response import UserSchema
-from src.service.users import User
+from src.service.users_api import User
 from src.authentication.auth import get_user_from_token
 
 router = APIRouter(prefix="/users")

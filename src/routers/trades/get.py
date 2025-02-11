@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from src.authentication.auth import get_user_from_token
-from src.service.trades import GetOffers
+from src.service.trades_api import GetOffers
 
 router = APIRouter(prefix="/trades")
 

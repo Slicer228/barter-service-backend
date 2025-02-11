@@ -8,7 +8,7 @@ from src.exc.exceptions import (
     UserAlreadyExists,
     NotVerificated, CategoryNotFound
 )
-from src.service.dao.enums import TradeTypes
+from src.service.core.enums import TradeTypes
 
 
 class _InternalFuncs:

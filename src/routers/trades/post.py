@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from src.authentication.auth import get_user_from_token
 from src.schemas.request import RequestTradeDataSchema
-from src.service.trades import OfferSignals
+from src.service.trades_api import OfferSignals
 
 
 router = APIRouter(prefix="/trades")

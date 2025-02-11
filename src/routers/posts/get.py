@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from src.schemas.response import PostSchema
-from src.service.posts import Posts
+from src.service.posts_api import Posts
 from src.schemas.filters import PostFilterSchema
 
 

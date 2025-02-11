@@ -1,7 +1,7 @@
 from src.schemas.request import RequestTradeDataSchema
 from sqlalchemy import select
 from src.models.db import UserTrades, UserPosts
-from src.service.dao.enums import TradeTypes, PostTypes, PostStatus, TradeStatus, OfferScenarios
+from src.service.core.enums import TradeTypes, PostTypes, PostStatus, TradeStatus, OfferScenarios
 from src.exc.exceptions import ParentException, TradeNotFound, BadRequest, NotYours
 
 

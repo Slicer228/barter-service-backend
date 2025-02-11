@@ -1,20 +1,20 @@
 from src.service.dto.offers import offer_view
 from src.service.db import async_session_maker
 from src.models.db import UserTrades, UserPosts
-from src.service.posts import Posts
+from src.service.posts_api import Posts
 from sqlalchemy import select, insert, update
 from src.schemas.response import TradeSchema
 from src.schemas.request import RequestTradeDataSchema
 from src.exc.exceptions import (
     OfferNotFound
 )
-from src.service.dao.enums import TradeTypes, PostStatus, TradeStatus, OfferScenarios
-from src.service.dao.utils import (
+from src.service.core.enums import TradeTypes, PostStatus, TradeStatus, OfferScenarios
+from src.service.core.utils_dao import (
     user_is_post_owner
 )
 from typing import List
-from src.service.users import User
-from src.service.dao.trades.scenario_validation import Validator
+from src.service.users_api import User
+from src.service.core.trades.validator import Validator
 
 
 class GetOffers:

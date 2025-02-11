@@ -6,7 +6,7 @@ from src.service.dto.users import userview
 from src.authentication.auth import get_hashed_password
 from src.exc.exceptions import UserNotFound, BadToken
 import json
-from src.service.dao.utils import email_exists
+from src.service.core.utils_dao import email_exists
 from datetime import datetime
 
 

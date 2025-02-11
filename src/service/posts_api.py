@@ -1,12 +1,12 @@
 from src.service.dto.posts import postview
 from src.schemas.request import AddPostSchema
 from src.models.db import UserTrades, UserPosts, PostPhotos, PostCategories, Categories, Trades
-from src.service.users import User
+from src.service.users_api import User
 from sqlalchemy import select, insert
 from src.service.db import async_session_maker
 from src.exc.exceptions import ParentException
-from src.service.dao.utils import category_exists
-from src.service.dao.filter import PostFilter
+from src.service.core.utils_dao import category_exists
+from src.service.core.posts.filter import PostFilter
 
 
 class Posts:
