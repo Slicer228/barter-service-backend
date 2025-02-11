@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from src.service.posts_api import Posts
+from src.service.posts_api.posts_api import Posts
 from src.schemas.request import AddPostSchema
 from src.authentication.auth import get_user_from_token
 

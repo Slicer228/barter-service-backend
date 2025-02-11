@@ -1,6 +1,6 @@
 
 
-def offer_view(func):
+def trades_view(func):
 
     async def wrapper(*args):
         original = await func(*args)
