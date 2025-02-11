@@ -4,6 +4,8 @@ from sqlalchemy import select, update
 from typing import List
 from src.service.core.utils_dao import user_is_post_owner
 from src.schemas.response import TradeSchema
+from src.service.posts_api.get import FetchDataPostInteractor
+from src.service.users_api.get import FetchDataUserInteractor
 
 
 async def find_trades(
@@ -34,7 +36,7 @@ async def generate_offers(session, trades: List[UserTrades]):
         data = await session.execute(stmt)
         data = data.scalars().first()
 
-        return await Posts.get(data)
+        return await FetchDataPostInteractor.get_by_id(data)
 
     offers = []
     for trade in trades:
@@ -43,7 +45,9 @@ async def generate_offers(session, trades: List[UserTrades]):
                 TradeSchema(
                     post=await find_post_by_trade(session, trade.trade_id),
                     source_post=(
-                        await Posts.get(trade.post_id) if trade.post_id else await User.get_user(trade.user_id)
+                        await FetchDataPostInteractor.get_by_id(trade.post_id)\
+                            if trade.post_id\
+                            else await FetchDataUserInteractor.get_user(trade.user_id)
                     ),
                 )
             )

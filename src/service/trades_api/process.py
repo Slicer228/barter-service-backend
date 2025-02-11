@@ -1,9 +1,9 @@
 from src.schemas.request import RequestTradeDataSchema
 from src.exc.exceptions import ParentException
-from src.service.core.trades import Trades
+from src.service.core.trades import TradesObj
 
 
-class ProcessDataInteractor:
+class ProcessDataTradeInteractor:
     SEND = 5
     ACCEPT = 6
     REJECT = 7
@@ -13,12 +13,12 @@ class ProcessDataInteractor:
     async def update_trade(cls, trade_data: RequestTradeDataSchema, user_id: int, activity_prop: int, **kwargs):
         match activity_prop:
             case cls.SEND:
-                return await Trades.send_offer(trade_data, user_id, kwargs)
+                return await TradesObj.send_offer(trade_data, user_id, kwargs)
             case cls.ACCEPT:
-                return await Trades.accept_offer(trade_data, user_id, kwargs)
+                return await TradesObj.accept_offer(trade_data, user_id, kwargs)
             case cls.REJECT:
-                return await Trades.reject_offer(trade_data, user_id, kwargs)
+                return await TradesObj.reject_offer(trade_data, user_id, kwargs)
             case cls.END:
-                return await Trades.end_offer(trade_data, user_id, kwargs)
+                return await TradesObj.end_offer(trade_data, user_id, kwargs)
             case _:
                 raise ParentException('No activity prop found')
