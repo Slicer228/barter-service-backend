@@ -1,4 +1,4 @@
-module golang
+module verification
 
 go 1.23
 
